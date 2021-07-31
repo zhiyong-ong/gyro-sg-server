@@ -14,60 +14,63 @@ from app.core import security
 from app.core.config import CONFIG
 
 reusable_oauth2 = OAuth2PasswordBearer(
-	tokenUrl=f"{CONFIG.API_V1_STR}/login/access-token"
+    tokenUrl=f"{CONFIG.API_V1_STR}/login/access-token"
 )
 
 
 @contextmanager
 def database_context_manager():
-	db = SessionLocal()
-	try:
-		yield db
-		db.commit()
-	except:
-		db.rollback()
-		raise
-	finally:
-		db.close()
+    db = SessionLocal()
+    try:
+        yield db
+        db.commit()
+    except:
+        db.rollback()
+        raise
+    finally:
+        db.close()
 
 
 def get_db() -> Generator:
-	with database_context_manager() as db:
-		yield db
+    with database_context_manager() as db:
+        yield db
 
 
 def get_current_user(
-	db: Session = Depends(get_db), token: str = Depends(reusable_oauth2)
+    db: Session = Depends(get_db), token: str = Depends(reusable_oauth2)
 ) -> models.User:
-	try:
-		payload = jwt.decode(
-			token, CONFIG.SECRET_KEY, algorithms=[security.ALGORITHM]
-		)
-		token_data = schemas.TokenPayload(**payload)
-	except (jwt.JWTError, ValidationError):
-		raise HTTPException(
-			status_code=status.HTTP_403_FORBIDDEN,
-			detail="Could not validate credentials",
-		)
-	user = crud.user.get(db, id=token_data.sub)
-	if not user:
-		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-	return user
+    try:
+        payload = jwt.decode(token, CONFIG.SECRET_KEY, algorithms=[security.ALGORITHM])
+        token_data = schemas.TokenPayload(**payload)
+    except (jwt.JWTError, ValidationError):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Could not validate credentials",
+        )
+    user = crud.user.get(db, id=token_data.sub)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+        )
+    return user
 
 
 def get_current_active_user(
-	current_user: models.User = Depends(get_current_user),
+    current_user: models.User = Depends(get_current_user),
 ) -> models.User:
-	if not crud.user.is_active(current_user):
-		raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user")
-	return current_user
+    if not crud.user.is_active(current_user):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user"
+        )
+    return current_user
 
 
 def get_current_active_superuser(
-	current_user: models.User = Depends(get_current_user),
+    current_user: models.User = Depends(get_current_user),
 ) -> models.User:
-	if not crud.user.is_active_superuser(current_user):
-		raise HTTPException(
-			status_code=status.HTTP_400_BAD_REQUEST, detail="The user doesn't have enough privileges"
-		)
-	return current_user
+    if not crud.user.is_active_superuser(current_user):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The user doesn't have enough privileges",
+        )
+    return current_user

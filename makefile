@@ -19,6 +19,10 @@ requirements:
 	env/bin/pip freeze > requirements.txt
 
 
+.PHONY: format
+format:
+	env/bin/python -m black app
+
 .PHONY: create-db
 create-dev-db:
 	PGPASSWORD=gyrosg psql postgres -U gyrosg -h localhost -c "CREATE DATABASE ${MODULE};"
@@ -28,8 +32,8 @@ create-migrations:
 	@read -p "Enter a migration name for this migration: " MIGRATION_NAME; \
 	GYROSG_API_ENV=dev alembic revision --autogenerate -m $$MIGRATION_NAME
 
-.PHONY: migrate
-migrate:
+.PHONY: migrate-dev
+migrate-dev:
 	GYROSG_API_ENV=dev alembic upgrade head
 
 .PHONY: migrate-rollback

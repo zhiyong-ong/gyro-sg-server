@@ -5,14 +5,16 @@ from typing import Optional, Any, Dict
 
 from pydantic import BaseSettings, PostgresDsn, validator
 
-DEV = 'dev'
-PROD = 'prod'
+DEV = "dev"
+PROD = "prod"
 
 CUR_ENV = os.environ.get("GYROSG_API_ENV", DEV)
+
 
 def parse_version_file(content: str):
     lines = [tuple(line.split("=")) for line in content.split("\n") if line]
     return {line[0]: line[1] for line in lines}
+
 
 def get_version():
     file_path = Path(__file__).parent.parent.parent / "version.txt"
@@ -26,6 +28,7 @@ def get_secret():
     with open(file_path, "r") as f:
         secret_content = f.read().strip()
     return secret_content
+
 
 class Settings(BaseSettings):
     PROJECT_NAME = "Gyro SG"
@@ -41,7 +44,9 @@ class Settings(BaseSettings):
     SQLALCHEMY_DATABASE_URI: Optional[PostgresDsn] = None
 
     @validator("SQLALCHEMY_DATABASE_URI", pre=True)
-    def assemble_db_connection(cls, sqlalchemy_database_url: Optional[str], values: Dict[str, Any]) -> Any:
+    def assemble_db_connection(
+        cls, sqlalchemy_database_url: Optional[str], values: Dict[str, Any]
+    ) -> Any:
         if isinstance(sqlalchemy_database_url, str):
             return sqlalchemy_database_url
         return PostgresDsn.build(
@@ -50,19 +55,20 @@ class Settings(BaseSettings):
             user=values.get("DB_USER"),
             password=values.get("DB_PASSWORD"),
             port=values.get("DB_PORT"),
-            path=f"/{values.get('DB_NAME', '')}"
+            path=f"/{values.get('DB_NAME', '')}",
         )
 
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
 
+
 class ProdConfig(Settings):
     DEVELOPMENT = False
 
+
 class DevConfig(Settings):
     DEVELOPMENT = True
-
 
 
 ENVIRONMENT_MAP = {
