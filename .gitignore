@@ -1,0 +1,6 @@
+.env
+env/
+secrets.txt
+*.pyc
+*.pyo
+.idea/
