@@ -2,7 +2,7 @@ from .bike import (
     Bike,
     BikeCreate,
     BikeUpdate,
-    BikeWithModel,
+    BikeWithRelationships,
     BikeModelCreate,
     BikeModelUpdate,
     BikeModel,
@@ -11,7 +11,9 @@ from .msg import Msg
 from .token import TokenPayload, Token
 from .user import (
     User,
+    UserWithId,
     UserCreate,
+    UserCreateSuperuser,
     UserUpdateCurrent,
     UserUpdateSuperuser,
     UserUpdatePassword,

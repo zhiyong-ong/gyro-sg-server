@@ -70,10 +70,36 @@ def create_user_open(
     existing_user = crud.user.get_by_email(db, email=user_in.email)
     if existing_user:
         raise HTTPException(
-            status_code=400,
+            status_code=status.HTTP_409_CONFLICT,
             detail="The user with this email already exists in the system",
         )
     user = crud.user.create(db, obj_in=user_in)
+    return user
+
+
+@router.post(
+    open_endpoint,
+    response_model=schemas.User,
+    status_code=status.HTTP_201_CREATED,
+    description=SUPERUSER_PRIVILEGE_DESC,
+)
+def create_user_superuser(
+    *,
+    db: Session = Depends(deps.get_db),
+    user_in: schemas.UserCreateSuperuser,
+    current_superuser: models.User = Depends(deps.get_current_active_superuser),
+) -> Any:
+    """
+    Create new user using superuse
+    """
+    logger.info(f"Creating user {user_in.email}")
+    existing_user = crud.user.get_by_email(db, email=user_in.email)
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="The user with this email already exists in the system",
+        )
+    user = crud.user.create_superuser(db, obj_in=user_in)
     return user
 
 
@@ -119,7 +145,7 @@ def update_user(
     db: Session = Depends(deps.get_db),
     user_id: int,
     user_in: schemas.UserUpdateInput,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+    current_superuser: models.User = Depends(deps.get_current_active_superuser),
 ) -> Any:
     """
     Update own user.

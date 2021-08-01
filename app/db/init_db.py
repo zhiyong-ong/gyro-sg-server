@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from app import crud
+from app import crud, schemas
 from app.core.config import CONFIG
 from app.db import base  # noqa: F401
 
@@ -13,9 +13,11 @@ from app.models import User
 def init_db(db: Session) -> None:
     user = crud.user.get_by_email(db, email=CONFIG.FIRST_SUPERUSER)
     if not user:
-        user_in = User(
+        user_in = schemas.UserCreateSuperuser(
             email=CONFIG.FIRST_SUPERUSER,
-            password_hash=CONFIG.FIRST_SUPERUSER_PASSWORD,
+            password=CONFIG.FIRST_SUPERUSER_PASSWORD,
+            first_name="gyrosg",
+            last_name="admin",
             is_superuser=True,
         )
-        crud.user.create_db_model(db, db_model_in=user_in)
+        crud.user.create_superuser(db, obj_in=user_in)

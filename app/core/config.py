@@ -43,7 +43,7 @@ class Settings(BaseSettings):
     DB_NAME: str = "gyrosg"
     SQLALCHEMY_DATABASE_URI: Optional[PostgresDsn] = None
 
-    FIRST_SUPERUSER: EmailStr = "test@example.com"
+    FIRST_SUPERUSER: EmailStr = "test_superuser@example.com"
     FIRST_SUPERUSER_PASSWORD: str = "password"
 
     class Config:

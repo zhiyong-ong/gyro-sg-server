@@ -25,6 +25,10 @@ class UserCreate(UserBase):
     driving_licence_type: Optional[DrivingLicenceTypeEnum] = None
 
 
+class UserCreateSuperuser(UserCreate):
+    is_superuser: bool = False
+
+
 class UserUpdateCurrent(UserBase):
     is_active: Optional[bool] = None
 
@@ -46,6 +50,13 @@ class UserUpdateInput(UserUpdateSuperuser):
 class User(UserBase):
     is_superuser: Optional[bool]
     is_active: Optional[bool]
+
+    class Config:
+        orm_mode = True
+
+
+class UserWithId(User):
+    id: int
 
     class Config:
         orm_mode = True
