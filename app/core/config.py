@@ -1,12 +1,12 @@
 import os
-import secrets
 from pathlib import Path
 from typing import Optional, Any, Dict
 
-from pydantic import BaseSettings, PostgresDsn, validator
+from pydantic import BaseSettings, PostgresDsn, validator, EmailStr
 
 DEV = "dev"
 PROD = "prod"
+TEST = "test"
 
 CUR_ENV = os.environ.get("GYROSG_API_ENV", DEV)
 
@@ -43,6 +43,17 @@ class Settings(BaseSettings):
     DB_NAME: str = "gyrosg"
     SQLALCHEMY_DATABASE_URI: Optional[PostgresDsn] = None
 
+    FIRST_SUPERUSER: EmailStr = "test@example.com"
+    FIRST_SUPERUSER_PASSWORD: str = "password"
+
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
+
+
+class ProdConfig(Settings):
+    DEVELOPMENT = False
+
     @validator("SQLALCHEMY_DATABASE_URI", pre=True)
     def assemble_db_connection(
         cls, sqlalchemy_database_url: Optional[str], values: Dict[str, Any]
@@ -58,22 +69,49 @@ class Settings(BaseSettings):
             path=f"/{values.get('DB_NAME', '')}",
         )
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-
-
-class ProdConfig(Settings):
-    DEVELOPMENT = False
-
 
 class DevConfig(Settings):
     DEVELOPMENT = True
+
+    @validator("SQLALCHEMY_DATABASE_URI", pre=True)
+    def assemble_db_connection(
+        cls, sqlalchemy_database_url: Optional[str], values: Dict[str, Any]
+    ) -> Any:
+        if isinstance(sqlalchemy_database_url, str):
+            return sqlalchemy_database_url
+        return PostgresDsn.build(
+            scheme="postgresql",
+            host=values.get("DB_HOST"),
+            user=values.get("DB_USER"),
+            password=values.get("DB_PASSWORD"),
+            port=values.get("DB_PORT"),
+            path=f"/{values.get('DB_NAME', '')}",
+        )
+
+
+class TestConfig(Settings):
+    DEVELOPMENT = True
+
+    @validator("SQLALCHEMY_DATABASE_URI", pre=True)
+    def assemble_db_connection(
+        cls, sqlalchemy_database_url: Optional[str], values: Dict[str, Any]
+    ) -> Any:
+        if isinstance(sqlalchemy_database_url, str):
+            return sqlalchemy_database_url
+        return PostgresDsn.build(
+            scheme="postgresql",
+            host=values.get("DB_HOST"),
+            user=values.get("DB_USER"),
+            password=values.get("DB_PASSWORD"),
+            port=values.get("DB_PORT"),
+            path=f"/{values.get('DB_NAME', '')}_test",
+        )
 
 
 ENVIRONMENT_MAP = {
     DEV: DevConfig(),
     PROD: ProdConfig(),
+    TEST: TestConfig(),
 }
 
 

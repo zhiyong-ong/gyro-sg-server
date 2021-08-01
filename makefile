@@ -23,9 +23,14 @@ requirements:
 format:
 	env/bin/python -m black app
 
-.PHONY: create-db
+.PHONY: create-dev-db
 create-dev-db:
 	PGPASSWORD=gyrosg psql postgres -U gyrosg -h localhost -c "CREATE DATABASE ${MODULE};"
+
+
+.PHONY: create-test-db
+create-test-db:
+	PGPASSWORD=gyrosg psql postgres -U gyrosg -h localhost -c "CREATE DATABASE ${MODULE}_test;"
 
 .PHONY: create-migrations
 create-migrations:
@@ -35,6 +40,7 @@ create-migrations:
 .PHONY: migrate-dev
 migrate-dev:
 	GYROSG_API_ENV=dev alembic upgrade head
+	env/bin/python -m app.initial_data
 
 .PHONY: migrate-rollback
 migrate-rollback:

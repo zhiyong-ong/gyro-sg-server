@@ -9,13 +9,12 @@ from app.crud.base import CRUDBase
 from app.models import User
 from app.schemas.user import (
     UserCreate,
-    UserUpdate,
-    UserUpdateCurrent,
     UserUpdatePassword,
+    UserUpdateInput,
 )
 
 
-class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
+class CRUDUser(CRUDBase[User, UserCreate, UserUpdateInput]):
     def get_by_email(self, db: Session, *, email: str):
         return db.query(User).filter(User.email == email).first()
 
@@ -32,7 +31,11 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         return self.create_db_model(db, db_model_in=db_obj)
 
     def update_with_superuser(
-        self, db: Session, *, db_obj: User, obj_in: Union[UserUpdate, Dict[str, Any]]
+        self,
+        db: Session,
+        *,
+        db_obj: User,
+        obj_in: Union[UserUpdateInput, Dict[str, Any]]
     ) -> User:
         if isinstance(obj_in, dict):
             update_data = obj_in
@@ -53,7 +56,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
                 detail="Incorrect current password given.",
             )
         new_password_hash = get_password_hash(obj_in.new_password)
-        update_data = UserUpdate(password_hash=new_password_hash)
+        update_data = {"password_hash": new_password_hash}
         return super().update(db, db_obj=db_obj, obj_in=update_data)
 
     def authenticate(self, db: Session, *, email: str, password: str) -> Optional[User]:

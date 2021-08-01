@@ -16,6 +16,8 @@ DB_USER=gyrosg
 DB_PASSWORD=gyrosg
 DB_PORT=5432
 DB_NAME=gyrosg
+FIRST_SUPERUSER=gyrosg_admin@gyrosg.com
+FIRST_SUPERUSER_PASSWORD=gyrosg_admin
 ```
 
 Install your own postgres database locally (ubuntu):

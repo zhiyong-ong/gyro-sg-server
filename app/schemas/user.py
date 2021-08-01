@@ -43,10 +43,6 @@ class UserUpdateInput(UserUpdateSuperuser):
     password: Optional[str] = None
 
 
-class UserUpdate(UserUpdateSuperuser):
-    password_hash: Optional[str] = None
-
-
 class User(UserBase):
     is_superuser: Optional[bool]
     is_active: Optional[bool]

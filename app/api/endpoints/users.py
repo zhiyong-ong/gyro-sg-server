@@ -8,7 +8,7 @@ from starlette import status
 
 from app import crud, schemas, models
 from app.api import deps
-from app.core.constants import SUPERUSER_PRIVILEGE_DESC
+from app.core.constants import SUPERUSER_PRIVILEGE_DESC, BASIC_USER_DESC, PUBLIC_DESC
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -23,10 +23,11 @@ open_endpoint = "/open"
     base_endpoint,
     response_model=List[schemas.User],
     description=SUPERUSER_PRIVILEGE_DESC,
+    status_code=status.HTTP_200_OK,
 )
 def read_users(
     db: Session = Depends(deps.get_db),
-    skip: int = 0,
+    offset: int = 0,
     limit: int = 100,
     current_user: models.User = Depends(deps.get_current_active_superuser),
 ) -> Any:
@@ -34,11 +35,16 @@ def read_users(
     Retrieve users.
     """
     logger.info(f"Retrieving all users")
-    users = crud.user.get_multi(db, skip=skip, limit=limit)
+    users = crud.user.get_multi(db, offset=offset, limit=limit)
     return users
 
 
-@router.get(cur_user_endpoint, response_model=schemas.User)
+@router.get(
+    cur_user_endpoint,
+    response_model=schemas.User,
+    description=BASIC_USER_DESC,
+    status_code=status.HTTP_200_OK,
+)
 def read_current_user(
     *, current_user: models.User = Depends(deps.get_current_active_user)
 ):
@@ -47,7 +53,10 @@ def read_current_user(
 
 
 @router.post(
-    open_endpoint, response_model=schemas.User, status_code=status.HTTP_201_CREATED
+    open_endpoint,
+    response_model=schemas.User,
+    status_code=status.HTTP_201_CREATED,
+    description=PUBLIC_DESC,
 )
 def create_user_open(
     *,
@@ -68,7 +77,9 @@ def create_user_open(
     return user
 
 
-@router.patch(cur_user_endpoint, response_model=schemas.User)
+@router.patch(
+    cur_user_endpoint, response_model=schemas.User, description=BASIC_USER_DESC
+)
 def update_current_user(
     *,
     db: Session = Depends(deps.get_db),
@@ -83,7 +94,9 @@ def update_current_user(
     return user
 
 
-@router.patch(cur_user_password_endpoint, response_model=schemas.User)
+@router.patch(
+    cur_user_password_endpoint, response_model=schemas.User, description=BASIC_USER_DESC
+)
 def update_current_user_password(
     *,
     db: Session = Depends(deps.get_db),
