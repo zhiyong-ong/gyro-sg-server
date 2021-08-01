@@ -1,6 +1,5 @@
 from typing import Dict
 
-from sqlalchemy.orm import Session
 from starlette.testclient import TestClient
 
 from app import schemas
@@ -8,10 +7,9 @@ from app import schemas
 
 def test_create_bike_current_user(
     client: TestClient,
-    test_db: Session,
     bike_model_1: schemas.BikeModel,
     user: schemas.User,
-    user_headers,
+    user_headers: Dict[str, str],
 ):
     data = {
         "color": "test color 1",
@@ -39,7 +37,6 @@ def test_create_bike_current_user(
 
 def test_create_bike_current_user_no_user(
     client: TestClient,
-    test_db: Session,
     bike_model_1: schemas.BikeModel,
     user: schemas.User,
 ):

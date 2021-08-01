@@ -14,6 +14,9 @@ class UserBase(BaseModel):
     nric_number: Optional[str] = None
     driving_licence_type: Optional[DrivingLicenceTypeEnum] = None
 
+    class Config:
+        extra = "forbid"
+
 
 class UserCreate(UserBase):
     email: EmailStr

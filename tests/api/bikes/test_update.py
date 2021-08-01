@@ -1,15 +1,15 @@
-from typing import Dict, Tuple
+from typing import Dict
 
 from sqlalchemy.orm import Session
 from starlette.testclient import TestClient
 
-from app import schemas
+from app import schemas, crud
 
 
 def test_update_bike_current_user(
     client: TestClient,
-    test_db: Session,
     bike_with_model_1: schemas.BikeWithRelationships,
+    test_db: Session,
     user_headers: Dict[str, str],
 ):
     update_data = {
@@ -22,11 +22,13 @@ def test_update_bike_current_user(
     )
     assert response.status_code == 200
     assert response.json()["color"] == "updated color"
+    bike = crud.bike.get(test_db, id=bike_with_model_1.id)
+    assert bike
+    assert bike.color == "updated color"
 
 
 def test_update_bike_current_user_bike_missing(
     client: TestClient,
-    test_db: Session,
     bike_with_model_1: schemas.BikeWithRelationships,
     user_headers: Dict[str, str],
 ):
@@ -41,7 +43,6 @@ def test_update_bike_current_user_bike_missing(
 
 def test_update_bike_current_user_no_user(
     client: TestClient,
-    test_db: Session,
     bike_with_model_1: schemas.BikeWithRelationships,
 ):
     update_data = {
@@ -55,7 +56,6 @@ def test_update_bike_current_user_no_user(
 
 def test_update_bike_current_user_incorrect_user(
     client: TestClient,
-    test_db: Session,
     bike_with_model_1: schemas.BikeWithRelationships,
     other_user_headers: Dict[str, str],
 ):
@@ -72,8 +72,8 @@ def test_update_bike_current_user_incorrect_user(
 
 def test_update_bike(
     client: TestClient,
-    test_db: Session,
     bike_with_model_1: schemas.BikeWithRelationships,
+    test_db: Session,
     superuser_headers: Dict[str, str],
 ):
     update_data = {
@@ -86,11 +86,13 @@ def test_update_bike(
     )
     assert response.status_code == 200
     assert response.json()["color"] == "updated color"
+    bike = crud.bike.get(test_db, id=bike_with_model_1.id)
+    assert bike
+    assert bike.color == "updated color"
 
 
 def test_update_bike_basic_user(
     client: TestClient,
-    test_db: Session,
     bike_with_model_1: schemas.BikeWithRelationships,
     user_headers: Dict[str, str],
 ):
@@ -105,7 +107,6 @@ def test_update_bike_basic_user(
 
 def test_update_bike_missing_bike(
     client: TestClient,
-    test_db: Session,
     bike_with_model_1: schemas.BikeWithRelationships,
     superuser_headers: Dict[str, str],
 ):

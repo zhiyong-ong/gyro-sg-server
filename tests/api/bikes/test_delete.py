@@ -23,7 +23,6 @@ def test_delete_bike_current_user(
 
 def test_delete_bike_current_user_bike_missing(
     client: TestClient,
-    test_db: Session,
     bike_with_model_1: schemas.BikeWithRelationships,
     user_headers: Dict[str, str],
 ):
@@ -33,7 +32,6 @@ def test_delete_bike_current_user_bike_missing(
 
 def test_delete_bike_current_user_no_user(
     client: TestClient,
-    test_db: Session,
     bike_with_model_1: schemas.BikeWithRelationships,
 ):
     response = client.delete(
@@ -44,7 +42,6 @@ def test_delete_bike_current_user_no_user(
 
 def test_delete_bike_current_user_incorrect_user(
     client: TestClient,
-    test_db: Session,
     bike_with_model_1: schemas.BikeWithRelationships,
     other_user_headers: Dict[str, str],
 ):
@@ -71,7 +68,6 @@ def test_delete_bike(
 
 def test_delete_bike_basic_user(
     client: TestClient,
-    test_db: Session,
     bike_with_model_1: schemas.BikeWithRelationships,
     user_headers: Dict[str, str],
 ):
@@ -83,7 +79,6 @@ def test_delete_bike_basic_user(
 
 def test_delete_bike_missing_bike(
     client: TestClient,
-    test_db: Session,
     bike_with_model_1: schemas.BikeWithRelationships,
     superuser_headers: Dict[str, str],
 ):

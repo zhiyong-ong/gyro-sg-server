@@ -1,9 +1,8 @@
 from typing import List
 
-from sqlalchemy.orm import Session
 from starlette.testclient import TestClient
 
-from app import schemas, crud
+from app import schemas
 
 
 def test_read_bikes(
@@ -35,7 +34,6 @@ def test_read_bikes_model_param(
 
 def test_read_bikes_is_deleted_param(
     client: TestClient,
-    test_db: Session,
     bikes_with_model: List[schemas.BikeWithRelationships],
     deleted_bike_with_model: schemas.BikeWithRelationships,
 ):

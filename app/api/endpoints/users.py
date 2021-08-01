@@ -21,15 +21,16 @@ open_endpoint = "/open"
 
 @router.get(
     base_endpoint,
-    response_model=List[schemas.User],
+    response_model=List[schemas.UserWithId],
     description=SUPERUSER_PRIVILEGE_DESC,
     status_code=status.HTTP_200_OK,
 )
 def read_users(
+    *,
     db: Session = Depends(deps.get_db),
+    current_user: models.User = Depends(deps.get_current_active_superuser),
     offset: int = 0,
     limit: int = 100,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
 ) -> Any:
     """
     Retrieve users.
@@ -50,6 +51,31 @@ def read_current_user(
 ):
     logger.info(f"Retrieving current user {current_user.email}")
     return current_user
+
+
+@router.get(
+    user_endpoint,
+    response_model=schemas.UserWithId,
+    description=SUPERUSER_PRIVILEGE_DESC,
+    status_code=status.HTTP_200_OK,
+)
+def read_user(
+    *,
+    db: Session = Depends(deps.get_db),
+    current_user: models.User = Depends(deps.get_current_active_superuser),
+    user_id: int,
+) -> Any:
+    """
+    Retrieve users.
+    """
+    logger.info(f"Retrieving user id {user_id}")
+    user = crud.user.get(db, id=user_id)
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="The user with this id does not exist in the system",
+        )
+    return user
 
 
 @router.post(
@@ -78,7 +104,7 @@ def create_user_open(
 
 
 @router.post(
-    open_endpoint,
+    base_endpoint,
     response_model=schemas.User,
     status_code=status.HTTP_201_CREATED,
     description=SUPERUSER_PRIVILEGE_DESC,

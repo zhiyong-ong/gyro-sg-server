@@ -19,6 +19,9 @@ class BikeBase(BaseModel):
     images: Optional[List[str]] = None
     model_id: Optional[int] = None
 
+    class Config:
+        extra = "forbid"
+
 
 class BikeCreate(BikeBase):
     model_id: int
