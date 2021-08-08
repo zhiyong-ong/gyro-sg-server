@@ -59,12 +59,12 @@ def read_bike(*, db: Session = Depends(deps.get_db), bike_id: int):
 def create_bike_current_user(
     *,
     db: Session = Depends(deps.get_db),
-    bike_in: schemas.BikeCreate,
+    bike_in: schemas.BikeCreateInput,
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     logger.info(f"Creating bike {bike_in} for user: {current_user.id}")
-    bike_in.user_id = current_user.id
-    bike = crud.bike.create(db, obj_in=bike_in)
+    bike_create_schema = schemas.BikeCreate(**bike_in.dict(), user_id=current_user.id)
+    bike = crud.bike.create(db, obj_in=bike_create_schema)
     return bike
 
 

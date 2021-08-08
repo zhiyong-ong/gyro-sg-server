@@ -1,6 +1,7 @@
 from .bike import (
     Bike,
     BikeCreate,
+    BikeCreateInput,
     BikeUpdate,
     BikeWithRelationships,
 )

@@ -24,8 +24,11 @@ class BikeBase(BaseModel):
         extra = "forbid"
 
 
-class BikeCreate(BikeBase):
+class BikeCreateInput(BikeBase):
     model_id: int
+
+
+class BikeCreate(BikeCreateInput):
     user_id: Optional[int] = None
 
 
