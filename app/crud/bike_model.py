@@ -1,10 +1,42 @@
+from typing import Optional
+
+from sqlalchemy.orm import Session
+
 from app.crud.base import CRUDBase
 from app.models.bike import BikeModel
 from app.schemas import BikeModelCreate, BikeModelUpdate
 
 
 class CRUDBikeModel(CRUDBase[BikeModel, BikeModelCreate, BikeModelUpdate]):
-    pass
+    def filter_with_params(
+        self,
+        db: Session,
+        *,
+        is_deleted: Optional[bool] = None,
+        offset: Optional[int] = None,
+        limit: Optional[int] = None,
+        multi: Optional[bool] = True,
+    ):
+        query = db.query(self.model)
+        if is_deleted is True:
+            query = query.filter(self.model.is_deleted == True)
+        if is_deleted is False:
+            query = query.filter(self.model.is_deleted == False)
+
+        query = query.offset(offset).limit(limit)
+        if multi:
+            return query.all()
+        else:
+            return query.first()
+
+    def delete(
+        self,
+        db: Session,
+        *,
+        db_obj: BikeModel,
+    ):
+        delete_data = {"is_deleted": True}
+        self.update(db, db_obj=db_obj, obj_in=delete_data)
 
 
 bike_model = CRUDBikeModel(BikeModel)

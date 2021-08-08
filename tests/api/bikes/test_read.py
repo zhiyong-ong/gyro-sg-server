@@ -6,12 +6,14 @@ from app import schemas
 
 
 def test_read_bikes(
-    client: TestClient, bikes_with_model: List[schemas.BikeWithRelationships]
+    client: TestClient,
+    bikes_with_model: List[schemas.BikeWithRelationships],
+    deleted_bike_with_model: schemas.BikeWithRelationships,
 ):
     response = client.get("/api/v1/bikes")
     assert response.status_code == 200
     bikes_test_list = response.json()
-    assert len(bikes_test_list) == 3
+    assert len(bikes_test_list) == 4
 
 
 def test_read_bikes_model_param(

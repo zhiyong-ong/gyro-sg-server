@@ -4,6 +4,7 @@ from typing import Optional, List
 
 from pydantic.main import BaseModel
 from app.schemas.user import User
+from app.schemas.bike_model import BikeModel
 
 from app.core.constants import DrivingLicenceTypeEnum
 
@@ -12,8 +13,8 @@ class BikeBase(BaseModel):
     color: Optional[str] = None
     required_licence: Optional[DrivingLicenceTypeEnum] = None
     transmission: Optional[str] = None
-    storage_box: Optional[str] = None
-    rate: Optional[str] = None
+    storage_box: Optional[bool] = None
+    rate: Optional[float] = None
     rate_unit: Optional[str] = None
     description: Optional[str] = None
     images: Optional[List[str]] = None
@@ -41,31 +42,11 @@ class Bike(BikeBase):
 
 class BikeWithRelationships(BikeBase):
     id: int
-    model: "BikeModel"
-    user: Optional["User"] = None
+    model: BikeModel
+    user: Optional[User] = None
 
     class Config:
         orm_mode = True
 
 
-class BikeModelBase(BaseModel):
-    name: Optional[str]
-
-
-class BikeModelCreate(BikeModelBase):
-    name: str
-
-
-class BikeModelUpdate(BikeModelBase):
-    name: str
-
-
-class BikeModel(BikeModelBase):
-    id: int
-    name: str
-
-    class Config:
-        orm_mode = True
-
-
-BikeWithRelationships.update_forward_refs()
+# BikeWithRelationships.update_forward_refs()

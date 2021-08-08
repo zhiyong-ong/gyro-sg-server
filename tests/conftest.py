@@ -48,16 +48,16 @@ def test_db(get_test_db: Session):
     return get_test_db
 
 
-def override_get_db(get_test_db: Session) -> Iterator[Session]:
+def override_get_db(test_db: Session) -> Iterator[Session]:
     try:
-        yield get_test_db
+        yield test_db
     finally:
-        get_test_db.close()
+        test_db.close()
 
 
 @pytest.fixture
-def client(get_test_db: Session) -> TestClient:
-    app.dependency_overrides[get_db] = partial(override_get_db, get_test_db)
+def client(test_db: Session) -> TestClient:
+    app.dependency_overrides[get_db] = partial(override_get_db, test_db)
     return TestClient(app)
 
 
@@ -70,7 +70,8 @@ def superuser_headers(client: TestClient) -> Dict[str, str]:
     response = client.post(
         f"{TEST_CONFIG.API_V1_STR}/login/access-token", data=login_data
     )
-    tokens = response.json()
-    auth_token = tokens["access_token"]
+    token_response = response.json()
+    assert token_response
+    auth_token = token_response["access_token"]
     headers = {"Authorization": f"Bearer {auth_token}"}
     return headers

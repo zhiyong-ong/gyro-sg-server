@@ -3,9 +3,11 @@ from .bike import (
     BikeCreate,
     BikeUpdate,
     BikeWithRelationships,
+)
+from .bike_model import (
+    BikeModel,
     BikeModelCreate,
     BikeModelUpdate,
-    BikeModel,
 )
 from .msg import Msg
 from .token import TokenPayload, Token

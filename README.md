@@ -39,7 +39,7 @@ make create-dev-db
 
 Run the SQL migrations:
 ```
-make migrate
+make migrate-dev
 ```
 
 Create the secrets.txt in the base directory gyrosg which is used to generate the tokens. 
@@ -48,6 +48,12 @@ touch secrets.txt
 bin/generate_token.py > secrets.txt
 ```
 
+### Cleaning and rebuilding your database schemas
+Run 
+```
+make clean-dev-db
+make migrate-dev
+```
 
 ## Starting the Server
 Run 

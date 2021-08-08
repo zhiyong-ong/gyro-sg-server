@@ -45,6 +45,7 @@ def bike_with_model_1(
         images=["image1", "image2"],
         rate=1,
         rate_unit="hour",
+        storage_box=True,
         user_id=user.id,
     )
     bike_with_model_test = crud.bike.create_db_model(
@@ -68,6 +69,7 @@ def bikes_with_model_2(
         images=["image3"],
         rate=2,
         rate_unit="hour",
+        storage_box=True,
         user_id=user.id,
     )
     bike_with_model_test = crud.bike.create_db_model(
@@ -85,6 +87,7 @@ def bikes_with_model_2(
         images=["image4"],
         rate=3,
         rate_unit="hour",
+        storage_box=True,
         user_id=user.id,
     )
     bike_with_model_test = crud.bike.create_db_model(
@@ -118,6 +121,7 @@ def deleted_bike_with_model(
         images=["image1", "image2"],
         rate=1,
         rate_unit="hour",
+        storage_box=True,
         user_id=user.id,
         is_deleted=True,
     )

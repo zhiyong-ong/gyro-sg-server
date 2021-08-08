@@ -15,7 +15,8 @@ def test_create_bike_current_user(
         "color": "test color 1",
         "required_licence": "2A",
         "transmission": "manual",
-        "rate": "6",
+        "storage_box": True,
+        "rate": 6.50,
         "rate_unit": "hour",
         "description": "test desc",
         "images": ["image1.jpg"],
@@ -26,7 +27,7 @@ def test_create_bike_current_user(
     assert response.json()["color"] == "test color 1"
     assert response.json()["required_licence"] == "2A"
     assert response.json()["transmission"] == "manual"
-    assert response.json()["rate"] == "6"
+    assert response.json()["rate"] == 6.50
     assert response.json()["rate_unit"] == "hour"
     assert response.json()["description"] == "test desc"
     assert response.json()["images"] == ["image1.jpg"]

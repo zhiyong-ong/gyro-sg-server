@@ -47,7 +47,7 @@ create-test-db:
 	PGPASSWORD=gyrosg psql postgres -U gyrosg -h localhost -c "CREATE DATABASE ${MODULE}_test;"
 
 
-.PHONY: clean-dev-db
+.PHONY: clean-test-db
 clean-test-db:
 	PGPASSWORD=gyrosg psql postgres -U gyrosg -h localhost -c "DROP DATABASE IF EXISTS ${MODULE}_test;"
 	PGPASSWORD=gyrosg psql postgres -U gyrosg -h localhost -c "CREATE DATABASE ${MODULE}_test;"

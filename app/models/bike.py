@@ -20,7 +20,7 @@ class Bike(Base):
     transmission = db.Column(db.Text)
     storage_box = db.Column(db.Boolean)
     location = db.Column(db.Text)
-    rate = db.Column(db.Integer)
+    rate = db.Column(db.Float)
     rate_unit = db.Column(db.Text)
     description = db.Column(db.Text)
     images = db.Column(db.ARRAY(db.Text))
@@ -39,7 +39,8 @@ class Bike(Base):
 
 class BikeModel(Base):
     id = db.Column(db.BigInteger, primary_key=True)
-    name = db.Column(db.Text, nullable=False, unique=True)
+    name = db.Column(db.Text, nullable=False)
+    is_deleted = db.Column(db.Boolean, default=False, nullable=False)
     bikes = relationship("Bike", back_populates="model")
 
     def __repr__(self):
