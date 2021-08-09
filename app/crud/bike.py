@@ -50,7 +50,7 @@ class CRUDBike(CRUDBase[models.Bike, BikeCreate, BikeUpdate]):
         delete_data = {"is_deleted": True}
         self.update(db, db_obj=db_obj, obj_in=delete_data)
 
-    def create(
+    def create_bike(
         self, db: Session, *, obj_in: BikeCreateInput, current_user: User
     ) -> models.Bike:
         availability_list = (
