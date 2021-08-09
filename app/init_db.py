@@ -1,6 +1,8 @@
 import logging
 
-from app.db.init_db import init_db
+from app.db.initial_bike_data import initial_bike_data
+from app.db.initial_model_data import initial_model_data
+from app.db.initial_user_data import initial_user_data
 from app.db.session import SessionLocal
 
 logging.basicConfig(level=logging.INFO)
@@ -9,7 +11,9 @@ logger = logging.getLogger(__name__)
 
 def init() -> None:
     db = SessionLocal()
-    init_db(db)
+    initial_user_data(db)
+    initial_model_data(db)
+    initial_bike_data(db)
 
 
 def main() -> None:

@@ -9,10 +9,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from starlette.testclient import TestClient
 
+from app import schemas, crud
 from app.api.deps import get_db
 from app.db.base_class import Base
 from app.core.config import get_config, TEST
-from app.db.init_db import init_db
 from app.main import app
 
 TEST_CONFIG = get_config(TEST)
@@ -44,7 +44,6 @@ def test_db(get_test_db: Session):
     get_test_db.commit()
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
-    init_db(get_test_db)
     return get_test_db
 
 
@@ -60,9 +59,21 @@ def client(test_db: Session) -> TestClient:
     app.dependency_overrides[get_db] = partial(override_get_db, test_db)
     return TestClient(app)
 
+@pytest.fixture
+def superuser(client: TestClient, test_db: Session) -> schemas.UserWithId:
+    user_in = schemas.UserCreateSuperuser(
+        email=TEST_CONFIG.FIRST_SUPERUSER,
+        password=TEST_CONFIG.FIRST_SUPERUSER_PASSWORD,
+        first_name="gyrosg",
+        last_name="admin",
+        is_superuser=True,
+    )
+    user_model = crud.user.create_superuser(test_db, obj_in=user_in)
+    return schemas.UserWithId.from_orm(user_model)
+
 
 @pytest.fixture
-def superuser_headers(client: TestClient) -> Dict[str, str]:
+def superuser_headers(client: TestClient, superuser: schemas.UserWithId) -> Dict[str, str]:
     login_data = {
         "username": TEST_CONFIG.FIRST_SUPERUSER,
         "password": TEST_CONFIG.FIRST_SUPERUSER_PASSWORD,

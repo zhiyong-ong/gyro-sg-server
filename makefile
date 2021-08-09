@@ -62,12 +62,16 @@ create-migrations:
 .PHONY: migrate-dev
 migrate-dev:
 	GYROSG_API_ENV=dev alembic upgrade head
-	env/bin/python -m app.initial_data
 
 
 .PHONY: migrate-rollback
 migrate-rollback:
 	GYROSG_API_ENV=dev alembic downgrade -1
+
+
+.PHONY: init-data
+init-data:
+	env/bin/python -m app.init_db
 
 
 .PHONY: deploy
