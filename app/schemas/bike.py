@@ -3,10 +3,11 @@ from __future__ import annotations
 from typing import Optional, List
 
 from pydantic.main import BaseModel
-from app.schemas.user import User
-from app.schemas.bike_model import BikeModel
 
 from app.core.constants import DrivingLicenceTypeEnum
+from app.schemas.bike_availability import BikeAvailability, BikeAvailabilityBase
+from app.schemas.bike_model import BikeModel
+from app.schemas.user import User
 
 
 class BikeBase(BaseModel):
@@ -26,9 +27,11 @@ class BikeBase(BaseModel):
 
 class BikeCreateInput(BikeBase):
     model_id: int
+    availabilities: Optional[List[BikeAvailabilityBase]] = []
 
 
-class BikeCreate(BikeCreateInput):
+class BikeCreate(BikeBase):
+    model_id: int
     user_id: Optional[int] = None
 
 
@@ -47,9 +50,7 @@ class BikeWithRelationships(BikeBase):
     id: int
     model: BikeModel
     user: Optional[User] = None
+    availabilities: Optional[List[BikeAvailability]] = []
 
     class Config:
         orm_mode = True
-
-
-# BikeWithRelationships.update_forward_refs()

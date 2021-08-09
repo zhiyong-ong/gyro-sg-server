@@ -63,8 +63,7 @@ def create_bike_current_user(
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     logger.info(f"Creating bike {bike_in} for user: {current_user.id}")
-    bike_create_schema = schemas.BikeCreate(**bike_in.dict(), user_id=current_user.id)
-    bike = crud.bike.create(db, obj_in=bike_create_schema)
+    bike = crud.bike.create(db, obj_in=bike_in, current_user=current_user)
     return bike
 
 

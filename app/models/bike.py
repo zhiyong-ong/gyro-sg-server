@@ -33,6 +33,8 @@ class Bike(Base):
     user_id = db.Column(db.BigInteger, db.ForeignKey("user.id"))
     user = relationship("User", back_populates="bikes")
 
+    availabilities = relationship("BikeAvailability", back_populates="bike")
+
     def __repr__(self):
         return f"<Bike {self.id}>"
 
@@ -45,3 +47,14 @@ class BikeModel(Base):
 
     def __repr__(self):
         return f"<BikeModel {self.id}>"
+
+
+class BikeAvailability(Base):
+    id = db.Column(db.BigInteger, primary_key=True)
+    start_datetime = db.Column(db.DateTime(timezone=True), nullable=False)
+    end_datetime = db.Column(db.DateTime(timezone=True), nullable=False)
+    bike_id = db.Column(db.BigInteger, db.ForeignKey("bike.id"))
+    bike = relationship("Bike", back_populates="availabilities")
+
+    def __repr__(self):
+        return f"<BikeAvailability {self.id}>"

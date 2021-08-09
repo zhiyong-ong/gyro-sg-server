@@ -10,6 +10,11 @@ from .bike_model import (
     BikeModelCreate,
     BikeModelUpdate,
 )
+from .bike_availability import (
+    BikeAvailability,
+    BikeAvailabilityCreate,
+    BikeAvailabilityUpdate,
+)
 from .msg import Msg
 from .token import TokenPayload, Token
 from .user import (

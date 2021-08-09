@@ -59,6 +59,7 @@ def client(test_db: Session) -> TestClient:
     app.dependency_overrides[get_db] = partial(override_get_db, test_db)
     return TestClient(app)
 
+
 @pytest.fixture
 def superuser(client: TestClient, test_db: Session) -> schemas.UserWithId:
     user_in = schemas.UserCreateSuperuser(
@@ -73,7 +74,9 @@ def superuser(client: TestClient, test_db: Session) -> schemas.UserWithId:
 
 
 @pytest.fixture
-def superuser_headers(client: TestClient, superuser: schemas.UserWithId) -> Dict[str, str]:
+def superuser_headers(
+    client: TestClient, superuser: schemas.UserWithId
+) -> Dict[str, str]:
     login_data = {
         "username": TEST_CONFIG.FIRST_SUPERUSER,
         "password": TEST_CONFIG.FIRST_SUPERUSER_PASSWORD,

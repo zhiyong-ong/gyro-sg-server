@@ -2,12 +2,12 @@ from typing import Optional
 
 from sqlalchemy.orm import Session
 
+from app import models
 from app.crud.base import CRUDBase
-from app.models.bike import BikeModel
 from app.schemas import BikeModelCreate, BikeModelUpdate
 
 
-class CRUDBikeModel(CRUDBase[BikeModel, BikeModelCreate, BikeModelUpdate]):
+class CRUDBikeModel(CRUDBase[models.BikeModel, BikeModelCreate, BikeModelUpdate]):
     def filter_with_params(
         self,
         db: Session,
@@ -33,10 +33,10 @@ class CRUDBikeModel(CRUDBase[BikeModel, BikeModelCreate, BikeModelUpdate]):
         self,
         db: Session,
         *,
-        db_obj: BikeModel,
+        db_obj: models.BikeModel,
     ):
         delete_data = {"is_deleted": True}
         self.update(db, db_obj=db_obj, obj_in=delete_data)
 
 
-bike_model = CRUDBikeModel(BikeModel)
+bike_model = CRUDBikeModel(models.BikeModel)

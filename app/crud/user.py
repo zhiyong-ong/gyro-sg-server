@@ -4,9 +4,9 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from starlette import status
 
+from app import models
 from app.core.security import get_password_hash, verify_password
 from app.crud.base import CRUDBase
-from app.models import User
 from app.schemas.user import (
     UserCreate,
     UserUpdatePassword,
@@ -15,12 +15,12 @@ from app.schemas.user import (
 )
 
 
-class CRUDUser(CRUDBase[User, UserCreate, UserUpdateInput]):
+class CRUDUser(CRUDBase[models.User, UserCreate, UserUpdateInput]):
     def get_by_email(self, db: Session, *, email: str):
-        return db.query(User).filter(User.email == email).first()
+        return db.query(models.User).filter(models.User.email == email).first()
 
-    def create(self, db: Session, *, obj_in: UserCreate) -> User:
-        db_obj = User(
+    def create(self, db: Session, *, obj_in: UserCreate) -> models.User:
+        db_obj = models.User(
             email=obj_in.email,
             password_hash=get_password_hash(obj_in.password),
             first_name=obj_in.first_name,
@@ -31,8 +31,10 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdateInput]):
         )
         return self.create_db_model(db, db_model_in=db_obj)
 
-    def create_superuser(self, db: Session, *, obj_in: UserCreateSuperuser) -> User:
-        db_obj = User(
+    def create_superuser(
+        self, db: Session, *, obj_in: UserCreateSuperuser
+    ) -> models.User:
+        db_obj = models.User(
             email=obj_in.email,
             password_hash=get_password_hash(obj_in.password),
             first_name=obj_in.first_name,
@@ -48,9 +50,9 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdateInput]):
         self,
         db: Session,
         *,
-        db_obj: User,
+        db_obj: models.User,
         obj_in: Union[UserUpdateInput, Dict[str, Any]]
-    ) -> User:
+    ) -> models.User:
         if isinstance(obj_in, dict):
             update_data = obj_in
         else:
@@ -62,8 +64,8 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdateInput]):
         return super().update(db, db_obj=db_obj, obj_in=update_data)
 
     def update_password(
-        self, db: Session, *, db_obj: User, obj_in: Union[UserUpdatePassword]
-    ) -> User:
+        self, db: Session, *, db_obj: models.User, obj_in: Union[UserUpdatePassword]
+    ) -> models.User:
         if not verify_password(obj_in.cur_password, db_obj.password_hash):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -73,7 +75,9 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdateInput]):
         update_data = {"password_hash": new_password_hash}
         return super().update(db, db_obj=db_obj, obj_in=update_data)
 
-    def authenticate(self, db: Session, *, email: str, password: str) -> Optional[User]:
+    def authenticate(
+        self, db: Session, *, email: str, password: str
+    ) -> Optional[models.User]:
         user = self.get_by_email(db, email=email)
         if not user:
             return None
@@ -81,14 +85,14 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdateInput]):
             return None
         return user
 
-    def is_active(self, user: User) -> bool:
+    def is_active(self, user: models.User) -> bool:
         return user.is_active
 
-    def is_superuser(self, user: User) -> bool:
+    def is_superuser(self, user: models.User) -> bool:
         return user.is_superuser
 
-    def is_active_superuser(self, user: User) -> bool:
+    def is_active_superuser(self, user: models.User) -> bool:
         return user.is_active and user.is_superuser
 
 
-user = CRUDUser(User)
+user = CRUDUser(models.User)
