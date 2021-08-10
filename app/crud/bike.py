@@ -63,7 +63,6 @@ class CRUDBike(CRUDBase[models.Bike, BikeCreate, BikeUpdate]):
         bike_id = bike.id
 
         for availability in availability_list:
-            print(availability.start_datetime)
             bike_availability_schema = BikeAvailabilityCreate(
                 start_datetime=availability.start_datetime,
                 end_datetime=availability.end_datetime,
