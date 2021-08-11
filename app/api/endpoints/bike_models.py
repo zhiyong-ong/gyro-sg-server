@@ -38,7 +38,7 @@ def read_bike_models(
 @router.get(
     bike_model_endpoint,
     response_model=schemas.BikeModel,
-    description="Get bike model details based on bike id. " + PUBLIC_DESC,
+    description="Get bike model details based on bike model id. " + PUBLIC_DESC,
     status_code=status.HTTP_200_OK,
 )
 def read_bike_model(*, db: Session = Depends(deps.get_db), bike_model_id: int):
