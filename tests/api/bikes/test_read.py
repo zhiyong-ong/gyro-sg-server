@@ -16,17 +16,17 @@ def test_read_bikes(
     assert len(bikes_test_list) == 4
 
 
-def test_read_bikes_model_param(
+def test_read_bikes_model_id_param(
     client: TestClient, bikes_with_model: List[schemas.BikeWithRelationships]
 ):
-    params = {"model": "test bike model 1"}
+    params = {"model_id": 1}
     response = client.get("/api/v1/bikes", params=params)
     assert response.status_code == 200
     bikes_test_list = response.json()
     assert len(bikes_test_list) == 1
     assert bikes_test_list[0]["model"]["name"] == "test bike model 1"
 
-    params = {"model": "test bike model 2"}
+    params = {"model_id": 2}
     response = client.get("/api/v1/bikes", params=params)
     assert response.status_code == 200
     bikes_test_list = response.json()

@@ -26,14 +26,14 @@ bike_current_user_endpoint = "/{bike_id}/me"
 def read_bikes(
     *,
     db: Session = Depends(deps.get_db),
-    model: str = None,
+    model_id: int = None,
     is_deleted: Optional[bool] = None,
     offset: int = 0,
     limit: int = 100,
 ) -> Any:
     logger.info(f"Retrieving all bikes based on query parameters")
     bikes = crud.bike.filter_with_params(
-        db, model=model, is_deleted=is_deleted, offset=offset, limit=limit
+        db, model_id=model_id, is_deleted=is_deleted, offset=offset, limit=limit
     )
     return bikes
 

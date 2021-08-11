@@ -14,7 +14,7 @@ class CRUDBike(CRUDBase[models.Bike, BikeCreate, BikeUpdate]):
         db: Session,
         *,
         id: Optional[int] = None,
-        model: Optional[str] = None,
+        model_id: Optional[int] = None,
         is_deleted: Optional[bool] = None,
         offset: Optional[int] = None,
         limit: Optional[int] = None,
@@ -22,12 +22,11 @@ class CRUDBike(CRUDBase[models.Bike, BikeCreate, BikeUpdate]):
     ):
         query = (
             db.query(self.model)
-            .join(self.model.model)
-            .options(contains_eager(self.model.model))
+            .options(joinedload(self.model.model))
             .options(joinedload(self.model.user))
         )
-        if model:
-            query = query.filter(models.BikeModel.name == model)
+        if model_id:
+            query = query.filter(self.model.model_id == model_id)
         if id:
             query = query.filter(self.model.id == id)
         if is_deleted is True:
