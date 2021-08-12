@@ -15,6 +15,7 @@ class Bike(Base):
             values_callable=lambda obj: [e.value for e in obj],
             nullable=True,
             name="drivinglicencetypeenum",
+            create_type=False,
         )
     )
     transmission = db.Column(db.Text)
