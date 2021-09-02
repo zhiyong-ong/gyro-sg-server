@@ -1,15 +1,15 @@
 MODULE = gyrosg
-PORT = 8282
+PORT = 30009
 
 .PHONY: run-dev
 run-dev:
-	uvicorn app.main:app --reload --host 0.0.0.0 --port ${PORT}
+	env/bin/python -m uvicorn app.main:app --reload --host 0.0.0.0 --port ${PORT}
 
 
 .PHONY: clean
 clean:
-	rm -rf env
-	python -m venv env
+	rm -rf env || true
+	python3 -m venv env
 
 
 .PHONY: develop
@@ -30,6 +30,10 @@ format:
 test:
 	env/bin/python -m pytest tests
 
+
+################
+# DEV COMMANDS #
+################
 
 .PHONY: create-dev-db
 create-dev-db:
@@ -76,4 +80,18 @@ init-data:
 
 .PHONY: deploy
 deploy:
-	rsync -av -e 'ssh -p 18765' --exclude '.env' --exclude 'env' .  u1334-agpt8dlwwup4@gyrosg.com:~/gyrosg/server
+	rsync -av -e 'ssh -i ~/.ssh/gyrosg-server.pem' --exclude '.env' --exclude 'env' --exclude '.git*' --exclude '.idea*' --exclude 'tests' .	\
+	ec2-user@ec2-54-254-7-97.ap-southeast-1.compute.amazonaws.com:~/gyrosg/server
+
+
+#################
+# PROD COMMANDS #
+#################
+
+.PHONY: create-prod-db
+create-prod-db:
+	PGPASSWORD=gyrosg psql postgres -U gyrosg -h localhost -c "CREATE DATABASE ${MODULE};"
+
+.PHONY: migrate-prod
+migrate-prod:
+	GYROSG_API_ENV=prod env/bin/python -m alembic upgrade head
