@@ -7,14 +7,38 @@ from starlette import status
 
 from app import crud, schemas, models
 from app.api import deps
-from app.core.constants import PUBLIC_DESC, BASIC_USER_DESC, SUPERUSER_PRIVILEGE_DESC
+from app.core.constants import (
+    PUBLIC_DESC,
+    BASIC_USER_DESC,
+    SUPERUSER_PRIVILEGE_DESC,
+    DrivingLicenceTypeEnum,
+    TransmissionTypeEnum,
+)
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
 base_endpoint = ""
+filter_params_endpoint = "/filter-params"
 bike_endpoint = "/{bike_id}"
 bike_current_user_create_endpoint = "/me"
 bike_current_user_endpoint = "/{bike_id}/me"
+
+
+@router.get(
+    filter_params_endpoint,
+    response_model=schemas.BikeFilterParams,
+    description="Get bike filter params. " + PUBLIC_DESC,
+    status_code=status.HTTP_200_OK,
+)
+def read_bike_filter_params_endpoint(*, db: Session = Depends(deps.get_db)):
+    logger.info(f"Retrieving bike filter params")
+    response = {}
+    response["required_licence_types"] = [e.value for e in DrivingLicenceTypeEnum]
+    response["transmission_types"] = [e.value for e in TransmissionTypeEnum]
+
+    bike_models = crud.bike_model.filter_with_params(db, is_deleted=False)
+    response["bike_model_types"] = [bike_model.name for bike_model in bike_models]
+    return response
 
 
 @router.get(
@@ -26,15 +50,19 @@ bike_current_user_endpoint = "/{bike_id}/me"
 def read_bikes(
     *,
     db: Session = Depends(deps.get_db),
-    model_id: int = None,
+    model_name: str = None,
+    transmission: TransmissionTypeEnum = None,
+    required_licence: DrivingLicenceTypeEnum = None,
     is_deleted: Optional[bool] = None,
     offset: int = 0,
     limit: int = 100,
 ) -> Any:
     logger.info(f"Retrieving all bikes based on query parameters")
     bikes = crud.bike.filter_with_params(
-        db, model_id=model_id, is_deleted=is_deleted, offset=offset, limit=limit
+        db, model_name=model_name, transmission=transmission, required_licence=required_licence,
+        is_deleted=is_deleted, offset=offset, limit=limit
     )
+    print(bikes)
     return bikes
 
 

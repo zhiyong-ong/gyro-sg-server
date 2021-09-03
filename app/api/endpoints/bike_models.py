@@ -28,7 +28,7 @@ def read_bike_models(
     offset: int = 0,
     limit: int = 100,
 ) -> Any:
-    logger.info(f"Retrieving all bikes based on query parameters")
+    logger.info(f"Retrieving all bike models based on query parameters")
     bikes = crud.bike_model.filter_with_params(
         db, is_deleted=is_deleted, offset=offset, limit=limit
     )

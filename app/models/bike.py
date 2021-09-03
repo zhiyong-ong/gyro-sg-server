@@ -2,7 +2,7 @@ import sqlalchemy as db
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
-from app.core.constants import DrivingLicenceTypeEnum
+from app.core.constants import DrivingLicenceTypeEnum, TransmissionTypeEnum
 from sqlalchemy.dialects.postgresql import ENUM
 
 
@@ -18,7 +18,14 @@ class Bike(Base):
             create_type=False,
         )
     )
-    transmission = db.Column(db.Text)
+    transmission = db.Column(
+        ENUM(
+            TransmissionTypeEnum,
+            values_callable=lambda obj: [e.value for e in obj],
+            nullable=True,
+            name="transmissiontypeenum",
+        )
+    )
     storage_box = db.Column(db.Boolean)
     location = db.Column(db.Text)
     rate = db.Column(db.Float)
@@ -45,6 +52,15 @@ class BikeModel(Base):
     name = db.Column(db.Text, nullable=False)
     is_deleted = db.Column(db.Boolean, default=False, nullable=False)
     bikes = relationship("Bike", back_populates="model")
+
+    __table_args__ = (
+        db.Index(
+            "ix_unique_name_bike_model",
+            "name",
+            unique=True,
+            postgresql_where=(~is_deleted),
+        ),
+    )
 
     def __repr__(self):
         return f"<BikeModel {self.id}>"

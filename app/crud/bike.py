@@ -3,6 +3,7 @@ from typing import Optional
 from sqlalchemy.orm import Session, contains_eager, joinedload
 
 from app import crud, models
+from app.core.constants import TransmissionTypeEnum, DrivingLicenceTypeEnum
 from app.crud.base import CRUDBase
 from app.models import User
 from app.schemas import BikeUpdate, BikeCreate, BikeCreateInput, BikeAvailabilityCreate
@@ -14,7 +15,9 @@ class CRUDBike(CRUDBase[models.Bike, BikeCreate, BikeUpdate]):
         db: Session,
         *,
         id: Optional[int] = None,
-        model_id: Optional[int] = None,
+        model_name: Optional[int] = None,
+        transmission: Optional[TransmissionTypeEnum] = None,
+        required_licence: Optional[DrivingLicenceTypeEnum] = None,
         is_deleted: Optional[bool] = None,
         offset: Optional[int] = None,
         limit: Optional[int] = None,
@@ -25,8 +28,12 @@ class CRUDBike(CRUDBase[models.Bike, BikeCreate, BikeUpdate]):
             .options(joinedload(self.model.model))
             .options(joinedload(self.model.user))
         )
-        if model_id:
-            query = query.filter(self.model.model_id == model_id)
+        if model_name:
+            query = query.join(self.model.model).filter(models.BikeModel.name == model_name)
+        if transmission:
+            query = query.filter(self.model.transmission == transmission)
+        if required_licence:
+            query = query.filter(self.model.required_licence == required_licence)
         if id:
             query = query.filter(self.model.id == id)
         if is_deleted is True:

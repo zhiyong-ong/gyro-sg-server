@@ -4,6 +4,7 @@ from .bike import (
     BikeCreateInput,
     BikeUpdate,
     BikeWithRelationships,
+    BikeFilterParams,
 )
 from .bike_model import (
     BikeModel,

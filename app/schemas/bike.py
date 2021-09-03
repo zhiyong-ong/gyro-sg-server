@@ -4,7 +4,7 @@ from typing import Optional, List
 
 from pydantic.main import BaseModel
 
-from app.core.constants import DrivingLicenceTypeEnum
+from app.core.constants import DrivingLicenceTypeEnum, TransmissionTypeEnum
 from app.schemas.bike_availability import BikeAvailability, BikeAvailabilityBase
 from app.schemas.bike_model import BikeModel
 from app.schemas.user import User
@@ -13,7 +13,7 @@ from app.schemas.user import User
 class BikeBase(BaseModel):
     color: Optional[str] = None
     required_licence: Optional[DrivingLicenceTypeEnum] = None
-    transmission: Optional[str] = None
+    transmission: Optional[TransmissionTypeEnum] = None
     storage_box: Optional[bool] = None
     rate: Optional[float] = None
     rate_unit: Optional[str] = None
@@ -54,3 +54,9 @@ class BikeWithRelationships(BikeBase):
 
     class Config:
         orm_mode = True
+
+
+class BikeFilterParams(BaseModel):
+    required_licence_types: List[DrivingLicenceTypeEnum]
+    transmission_types: List[TransmissionTypeEnum]
+    bike_model_types: List[str]
