@@ -89,11 +89,13 @@ deploy:
 create-prod-db:
 	PGPASSWORD=gyrosg psql postgres -U gyrosg -h localhost -c "CREATE DATABASE ${MODULE};"
 
+
+.PHONY: init-db
+init-db: migrate-prod
+	env/bin/python -m app.init_db
+
+
 .PHONY: migrate-prod
 migrate-prod:
 	GYROSG_API_ENV=prod env/bin/python -m alembic upgrade head
 
-
-.PHONY: init-prod-data
-init-prod-data:
-	env/bin/python -m app.init_db
