@@ -20,6 +20,12 @@ FIRST_SUPERUSER=gyrosg_admin@gyrosg.com
 FIRST_SUPERUSER_PASSWORD=gyrosg_admin
 ```
 
+Create the secrets.txt in the base directory gyrosg which is used to generate the tokens. 
+```
+touch secrets.txt
+bin/generate_token.py > secrets.txt
+```
+
 Install your own postgres database locally (ubuntu):
 ```
 sudo apt update
@@ -42,10 +48,9 @@ Run the SQL migrations:
 make migrate-dev
 ```
 
-Create the secrets.txt in the base directory gyrosg which is used to generate the tokens. 
+Initializing data:
 ```
-touch secrets.txt
-bin/generate_token.py > secrets.txt
+make init-data
 ```
 
 ### Cleaning and rebuilding your database schemas
@@ -85,6 +90,13 @@ FIRST_SUPERUSER=gyrosg_admin@gyrosg.com
 FIRST_SUPERUSER_PASSWORD=gyrosg_admin
 ```
 
+
+Create the secrets.txt in the base directory gyrosg which is used to generate the tokens. 
+```
+touch secrets.txt
+bin/generate_token.py > secrets.txt
+```
+
 Create the gyrosg user in the local postgres database:
 ```
 sudo -u postgres psql
@@ -101,12 +113,15 @@ Run the SQL migrations:
 make migrate-prod
 ```
 
-Create the secrets.txt in the base directory gyrosg which is used to generate the tokens. 
+Initializing data:
 ```
-touch secrets.txt
-bin/generate_token.py > secrets.txt
+make init-prod-data
 ```
 
+Running the server:
+```
+bin/run.sh
+```
 
 ## API Docs
-To view the API docs, please access http://localhost:8282/docs after starting the server.
+To view the API docs, please access http://localhost:30009/docs after starting the server.

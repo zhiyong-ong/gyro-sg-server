@@ -1,6 +1,11 @@
 MODULE = gyrosg
 PORT = 30009
 
+
+################
+# DEV COMMANDS #
+################
+
 .PHONY: run-dev
 run-dev:
 	env/bin/python -m uvicorn app.main:app --reload --host 0.0.0.0 --port ${PORT}
@@ -31,24 +36,16 @@ test:
 	env/bin/python -m pytest tests
 
 
-################
-# DEV COMMANDS #
-################
-
 .PHONY: create-dev-db
 create-dev-db:
 	PGPASSWORD=gyrosg psql postgres -U gyrosg -h localhost -c "CREATE DATABASE ${MODULE};"
+	PGPASSWORD=gyrosg psql postgres -U gyrosg -h localhost -c "CREATE DATABASE ${MODULE}_test;"
 
 
 .PHONY: clean-dev-db
 clean-dev-db:
 	PGPASSWORD=gyrosg psql postgres -U gyrosg -h localhost -c "DROP DATABASE IF EXISTS ${MODULE};"
 	PGPASSWORD=gyrosg psql postgres -U gyrosg -h localhost -c "CREATE DATABASE ${MODULE};"
-
-
-.PHONY: create-test-db
-create-test-db:
-	PGPASSWORD=gyrosg psql postgres -U gyrosg -h localhost -c "CREATE DATABASE ${MODULE}_test;"
 
 
 .PHONY: clean-test-db
@@ -95,3 +92,8 @@ create-prod-db:
 .PHONY: migrate-prod
 migrate-prod:
 	GYROSG_API_ENV=prod env/bin/python -m alembic upgrade head
+
+
+.PHONY: init-prod-data
+init-prod-data:
+	env/bin/python -m app.init_db
