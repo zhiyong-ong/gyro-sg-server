@@ -103,7 +103,7 @@ def bikes_with_model_2(
 
 
 @pytest.fixture
-def bikes_with_model(
+def bikes_with_models(
     test_db: Session,
     bike_with_model_1: schemas.BikeWithRelationships,
     bikes_with_model_2: List[schemas.BikeWithRelationships],

@@ -7,7 +7,7 @@ from app import schemas
 
 def test_read_bikes(
     client: TestClient,
-    bikes_with_model: List[schemas.BikeWithRelationships],
+    bikes_with_models: List[schemas.BikeWithRelationships],
     deleted_bike_with_model: schemas.BikeWithRelationships,
 ):
     response = client.get("/api/v1/bikes")
@@ -16,27 +16,27 @@ def test_read_bikes(
     assert len(bikes_test_list) == 4
 
 
-def test_read_bikes_model_id_param(
-    client: TestClient, bikes_with_model: List[schemas.BikeWithRelationships]
+def test_read_bikes_model_name_param(
+    client: TestClient, bikes_with_models: List[schemas.BikeWithRelationships]
 ):
-    params = {"model_id": 1}
+    params = {"model_name": bikes_with_models[0].model.name}
     response = client.get("/api/v1/bikes", params=params)
     assert response.status_code == 200
     bikes_test_list = response.json()
     assert len(bikes_test_list) == 1
-    assert bikes_test_list[0]["model"]["name"] == "test bike model 1"
+    assert bikes_test_list[0]["model"]["name"] == bikes_with_models[0].model.name
 
-    params = {"model_id": 2}
+    params = {"model_name": bikes_with_models[1].model.name}
     response = client.get("/api/v1/bikes", params=params)
     assert response.status_code == 200
     bikes_test_list = response.json()
     assert len(bikes_test_list) == 2
-    assert bikes_test_list[0]["model"]["name"] == "test bike model 2"
+    assert bikes_test_list[0]["model"]["name"] == bikes_with_models[1].model.name
 
 
 def test_read_bikes_is_deleted_param(
     client: TestClient,
-    bikes_with_model: List[schemas.BikeWithRelationships],
+    bikes_with_models: List[schemas.BikeWithRelationships],
     deleted_bike_with_model: schemas.BikeWithRelationships,
 ):
     params = {"is_deleted": False}
@@ -53,7 +53,7 @@ def test_read_bikes_is_deleted_param(
 
 
 def test_read_bikes_offset_limit_param(
-    client: TestClient, bikes_with_model: List[schemas.BikeWithRelationships]
+    client: TestClient, bikes_with_models: List[schemas.BikeWithRelationships]
 ):
     params = {"limit": 1}
     response = client.get("/api/v1/bikes", params=params)
@@ -76,9 +76,9 @@ def test_read_bikes_offset_limit_param(
 
 def test_read_bike(
     client: TestClient,
-    bikes_with_model: List[schemas.BikeWithRelationships],
+    bikes_with_models: List[schemas.BikeWithRelationships],
 ):
-    bike_id = bikes_with_model[0].id
+    bike_id = bikes_with_models[0].id
     response = client.get(f"/api/v1/bikes/{bike_id}")
     assert response.status_code == 200
-    assert response.json() == bikes_with_model[0].dict()
+    assert response.json() == bikes_with_models[0].dict()
