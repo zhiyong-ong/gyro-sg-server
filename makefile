@@ -78,7 +78,7 @@ init-data:
 .PHONY: deploy
 deploy:
 	rsync -av -e 'ssh -i ~/.ssh/gyrosg-server.pem' --exclude '.env' --exclude 'env' --exclude '.git*' --exclude '.idea*' --exclude 'tests' .	\
-	ec2-user@ec2-54-254-7-97.ap-southeast-1.compute.amazonaws.com:~/gyrosg/server
+	ubuntu@ec2-13-250-42-235.ap-southeast-1.compute.amazonaws.com:~/gyrosg/server
 
 
 #################

@@ -70,7 +70,17 @@ make run-dev
 ssh -i "~/.ssh/gyrosg-server.pem" ec2-user@ec2-54-254-7-97.ap-southeast-1.compute.amazonaws.com
 
 ## Setting up on ec2 instance
-https://dailyscrawl.com/how-to-install-postgresql-on-amazon-linux-2/
+Install your own postgres database locally (ubuntu):
+```
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+```
+
+Create the gyrosg user in the local postgres database:
+```
+sudo -u postgres psql
+postgres=# CREATE ROLE gyrosg CREATEDB LOGIN PASSWORD 'gyrosg'; 
+```
 
 Setup your python virtual environment:
 ```
@@ -108,14 +118,9 @@ Create the dev database:
 make create-prod-db
 ```
 
-Run the SQL migrations:
+Initializing data and migrations:
 ```
-make migrate-prod
-```
-
-Initializing data:
-```
-make init-prod-data
+make init-db
 ```
 
 Running the server:
