@@ -2,30 +2,12 @@ import sqlalchemy as db
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
-from app.core.constants import DrivingLicenceTypeEnum, TransmissionTypeEnum
-from sqlalchemy.dialects.postgresql import ENUM
 
 
 class Bike(Base):
     id = db.Column(db.BigInteger, primary_key=True)
     color = db.Column(db.Text)
-    required_licence = db.Column(
-        ENUM(
-            DrivingLicenceTypeEnum,
-            values_callable=lambda obj: [e.value for e in obj],
-            nullable=True,
-            name="drivinglicencetypeenum",
-            create_type=False,
-        )
-    )
-    transmission = db.Column(
-        ENUM(
-            TransmissionTypeEnum,
-            values_callable=lambda obj: [e.value for e in obj],
-            nullable=True,
-            name="transmissiontypeenum",
-        )
-    )
+    storage_rack = db.Column(db.Boolean)
     storage_box = db.Column(db.Boolean)
     location = db.Column(db.Text)
     rate = db.Column(db.Float)
@@ -33,6 +15,12 @@ class Bike(Base):
     description = db.Column(db.Text)
     images = db.Column(db.ARRAY(db.Text))
     is_deleted = db.Column(db.Boolean, default=False, nullable=False)
+    licence_class_id = db.Column(db.Integer, db.ForeignKey("licence_class.id"))
+    licence_class = relationship("LicenceClass")
+
+    transmission_id = db.Column(db.Integer, db.ForeignKey("transmission.id"))
+    transmission = relationship("Transmission")
+
     model_id = db.Column(
         db.BigInteger, db.ForeignKey("bike_model.id"), index=True, nullable=False
     )
@@ -75,3 +63,21 @@ class BikeAvailability(Base):
 
     def __repr__(self):
         return f"<BikeAvailability {self.id}>"
+
+
+class Transmission(Base):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text, nullable=False, unique=True)
+    description = db.Column(db.Text)
+
+    def __repr__(self):
+        return f"<Transmission {self.id}>"
+
+
+class LicenceClass(Base):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text, nullable=False, unique=True)
+    description = db.Column(db.Text)
+
+    def __repr__(self):
+        return f"<LicenceClass {self.id}>"

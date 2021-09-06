@@ -9,7 +9,7 @@ from app import schemas, crud
 def test_delete_bike_current_user(
     client: TestClient,
     test_db: Session,
-    bike_with_model_1: schemas.BikeWithRelationships,
+    bike_with_model_1: schemas.BikeResponse,
     user_headers: Dict[str, str],
 ):
     response = client.delete(
@@ -23,7 +23,7 @@ def test_delete_bike_current_user(
 
 def test_delete_bike_current_user_bike_missing(
     client: TestClient,
-    bike_with_model_1: schemas.BikeWithRelationships,
+    bike_with_model_1: schemas.BikeResponse,
     user_headers: Dict[str, str],
 ):
     response = client.delete(f"/api/v1/bikes/999/me", headers=user_headers)
@@ -32,7 +32,7 @@ def test_delete_bike_current_user_bike_missing(
 
 def test_delete_bike_current_user_no_user(
     client: TestClient,
-    bike_with_model_1: schemas.BikeWithRelationships,
+    bike_with_model_1: schemas.BikeResponse,
 ):
     response = client.delete(
         f"/api/v1/bikes/{bike_with_model_1.id}/me",
@@ -42,7 +42,7 @@ def test_delete_bike_current_user_no_user(
 
 def test_delete_bike_current_user_incorrect_user(
     client: TestClient,
-    bike_with_model_1: schemas.BikeWithRelationships,
+    bike_with_model_1: schemas.BikeResponse,
     other_user_headers: Dict[str, str],
 ):
     response = client.delete(
@@ -54,7 +54,7 @@ def test_delete_bike_current_user_incorrect_user(
 def test_delete_bike(
     client: TestClient,
     test_db: Session,
-    bike_with_model_1: schemas.BikeWithRelationships,
+    bike_with_model_1: schemas.BikeResponse,
     superuser_headers: Dict[str, str],
 ):
     response = client.delete(
@@ -68,7 +68,7 @@ def test_delete_bike(
 
 def test_delete_bike_basic_user(
     client: TestClient,
-    bike_with_model_1: schemas.BikeWithRelationships,
+    bike_with_model_1: schemas.BikeResponse,
     user_headers: Dict[str, str],
 ):
     response = client.delete(
@@ -79,7 +79,7 @@ def test_delete_bike_basic_user(
 
 def test_delete_bike_missing_bike(
     client: TestClient,
-    bike_with_model_1: schemas.BikeWithRelationships,
+    bike_with_model_1: schemas.BikeResponse,
     superuser_headers: Dict[str, str],
 ):
     response = client.delete(f"/api/v1/bikes/99", headers=superuser_headers)

@@ -1,16 +1,16 @@
 """init
 
-Revision ID: e3ae4222ce98
+Revision ID: b7ec73e0b7ce
 Revises: 
-Create Date: 2021-09-04 02:22:04.343381
+Create Date: 2021-09-07 02:17:11.456527
 
 """
 from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.dialects import postgresql
+
 
 # revision identifiers, used by Alembic.
-revision = 'e3ae4222ce98'
+revision = 'b7ec73e0b7ce'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -24,7 +24,21 @@ def upgrade():
     sa.Column('is_deleted', sa.Boolean(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_index('ix_unique_name_bike_model', 'bike_model', ['name'], unique=True, postgresql_where=sa.text("is_deleted=False"))
+    op.create_index('ix_unique_name_bike_model', 'bike_model', ['name'], unique=True, postgresql_where=sa.text('NOT is_deleted'))
+    op.create_table('licence_class',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.Text(), nullable=False),
+    sa.Column('description', sa.Text(), nullable=True),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('name')
+    )
+    op.create_table('transmission',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.Text(), nullable=False),
+    sa.Column('description', sa.Text(), nullable=True),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('name')
+    )
     op.create_table('user',
     sa.Column('id', sa.BigInteger(), nullable=False),
     sa.Column('email', sa.Text(), nullable=False),
@@ -33,17 +47,17 @@ def upgrade():
     sa.Column('last_name', sa.Text(), nullable=True),
     sa.Column('mobile_number', sa.Text(), nullable=True),
     sa.Column('nric_number', sa.Text(), nullable=True),
-    sa.Column('driving_licence_type', postgresql.ENUM('2', '2A', '2B', name='drivinglicencetypeenum'), nullable=True),
     sa.Column('is_superuser', sa.Boolean(), nullable=True),
     sa.Column('is_active', sa.Boolean(), nullable=True),
+    sa.Column('licence_class_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['licence_class_id'], ['licence_class.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )
     op.create_table('bike',
     sa.Column('id', sa.BigInteger(), nullable=False),
     sa.Column('color', sa.Text(), nullable=True),
-    sa.Column('required_licence', postgresql.ENUM('2', '2A', '2B', name='drivinglicencetypeenum', create_type=False), nullable=True),
-    sa.Column('transmission', postgresql.ENUM('Manual', 'Automatic', name='transmissiontypeenum'), nullable=True),
+    sa.Column('storage_rack', sa.Boolean(), nullable=True),
     sa.Column('storage_box', sa.Boolean(), nullable=True),
     sa.Column('location', sa.Text(), nullable=True),
     sa.Column('rate', sa.Float(), nullable=True),
@@ -51,9 +65,13 @@ def upgrade():
     sa.Column('description', sa.Text(), nullable=True),
     sa.Column('images', sa.ARRAY(sa.Text()), nullable=True),
     sa.Column('is_deleted', sa.Boolean(), nullable=False),
+    sa.Column('licence_class_id', sa.Integer(), nullable=True),
+    sa.Column('transmission_id', sa.Integer(), nullable=True),
     sa.Column('model_id', sa.BigInteger(), nullable=False),
     sa.Column('user_id', sa.BigInteger(), nullable=True),
+    sa.ForeignKeyConstraint(['licence_class_id'], ['licence_class.id'], ),
     sa.ForeignKeyConstraint(['model_id'], ['bike_model.id'], ),
+    sa.ForeignKeyConstraint(['transmission_id'], ['transmission.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -75,8 +93,8 @@ def downgrade():
     op.drop_index(op.f('ix_bike_model_id'), table_name='bike')
     op.drop_table('bike')
     op.drop_table('user')
-    op.drop_index('ix_unique_name_bike_model', table_name='bike_model', postgresql_where=sa.text('"is_deleted=False"'))
+    op.drop_table('transmission')
+    op.drop_table('licence_class')
+    op.drop_index('ix_unique_name_bike_model', table_name='bike_model', postgresql_where=sa.text('NOT is_deleted'))
     op.drop_table('bike_model')
-    op.execute("DROP TYPE drivinglicencetypeenum;")
-    op.execute("DROP TYPE transmissiontypeenum;")
     # ### end Alembic commands ###

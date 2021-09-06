@@ -8,7 +8,7 @@ from app import schemas, crud
 
 def test_update_bike_current_user(
     client: TestClient,
-    bike_with_model_1: schemas.BikeWithRelationships,
+    bike_with_model_1: schemas.BikeResponse,
     test_db: Session,
     user_headers: Dict[str, str],
 ):
@@ -29,7 +29,7 @@ def test_update_bike_current_user(
 
 def test_update_bike_current_user_bike_missing(
     client: TestClient,
-    bike_with_model_1: schemas.BikeWithRelationships,
+    bike_with_model_1: schemas.BikeResponse,
     user_headers: Dict[str, str],
 ):
     update_data = {
@@ -43,7 +43,7 @@ def test_update_bike_current_user_bike_missing(
 
 def test_update_bike_current_user_no_user(
     client: TestClient,
-    bike_with_model_1: schemas.BikeWithRelationships,
+    bike_with_model_1: schemas.BikeResponse,
 ):
     update_data = {
         "color": "updated color",
@@ -56,7 +56,7 @@ def test_update_bike_current_user_no_user(
 
 def test_update_bike_current_user_incorrect_user(
     client: TestClient,
-    bike_with_model_1: schemas.BikeWithRelationships,
+    bike_with_model_1: schemas.BikeResponse,
     other_user_headers: Dict[str, str],
 ):
     update_data = {
@@ -72,7 +72,7 @@ def test_update_bike_current_user_incorrect_user(
 
 def test_update_bike(
     client: TestClient,
-    bike_with_model_1: schemas.BikeWithRelationships,
+    bike_with_model_1: schemas.BikeResponse,
     test_db: Session,
     superuser_headers: Dict[str, str],
 ):
@@ -93,7 +93,7 @@ def test_update_bike(
 
 def test_update_bike_basic_user(
     client: TestClient,
-    bike_with_model_1: schemas.BikeWithRelationships,
+    bike_with_model_1: schemas.BikeResponse,
     user_headers: Dict[str, str],
 ):
     update_data = {
@@ -107,7 +107,7 @@ def test_update_bike_basic_user(
 
 def test_update_bike_missing_bike(
     client: TestClient,
-    bike_with_model_1: schemas.BikeWithRelationships,
+    bike_with_model_1: schemas.BikeResponse,
     superuser_headers: Dict[str, str],
 ):
     update_data = {

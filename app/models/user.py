@@ -1,9 +1,7 @@
 import sqlalchemy as db
-from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
-from app.core.constants import DrivingLicenceTypeEnum
 
 
 class User(Base):
@@ -14,17 +12,11 @@ class User(Base):
     last_name = db.Column(db.Text, nullable=True)
     mobile_number = db.Column(db.Text, nullable=True)
     nric_number = db.Column(db.Text, nullable=True)
-    driving_licence_type = db.Column(
-        ENUM(
-            DrivingLicenceTypeEnum,
-            values_callable=lambda obj: [e.value for e in obj],
-            name="drivinglicencetypeenum",
-            nullable=True,
-        )
-    )
     is_superuser = db.Column(db.Boolean, default=False)
     is_active = db.Column(db.Boolean, default=True)
     bikes = relationship("Bike", back_populates="user")
+    licence_class_id = db.Column(db.Integer, db.ForeignKey("licence_class.id"))
+    licence_class = relationship("LicenceClass")
 
     def __repr__(self):
         return f"<User {self.id}>"

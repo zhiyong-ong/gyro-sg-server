@@ -1,6 +1,5 @@
 MODULE = gyrosg
-PORT = 30009
-
+include .env
 
 ################
 # DEV COMMANDS #
@@ -8,7 +7,7 @@ PORT = 30009
 
 .PHONY: run-dev
 run-dev:
-	env/bin/python -m uvicorn app.main:app --reload --host 0.0.0.0 --port ${PORT}
+	env/bin/python -m uvicorn app.main:app --reload --host 0.0.0.0 --port ${SERVER_PORT}
 
 
 .PHONY: clean
@@ -38,13 +37,13 @@ test:
 
 .PHONY: create-dev-db
 create-dev-db:
-	PGPASSWORD=gyrosg psql postgres -U gyrosg -h localhost -c "CREATE DATABASE ${MODULE};"
+	PGPASSWORD=gyrosg psql postgres -U gyrosg -h localhost -c "CREATE DATABASE ${DB_NAME};"
 	PGPASSWORD=gyrosg psql postgres -U gyrosg -h localhost -c "CREATE DATABASE ${MODULE}_test;"
 
 
 .PHONY: clean-dev-db
 clean-dev-db:
-	PGPASSWORD=gyrosg psql postgres -U gyrosg -h localhost -c "DROP DATABASE IF EXISTS ${MODULE};"
+	PGPASSWORD=gyrosg psql postgres -U gyrosg -h localhost -c "DROP DATABASE IF EXISTS ${DB_NAME};"
 	PGPASSWORD=gyrosg psql postgres -U gyrosg -h localhost -c "CREATE DATABASE ${MODULE};"
 
 
@@ -57,45 +56,50 @@ clean-test-db:
 .PHONY: create-migrations
 create-migrations:
 	@read -p "Enter a migration name for this migration: " MIGRATION_NAME; \
-	GYROSG_API_ENV=dev alembic revision --autogenerate -m $$MIGRATION_NAME
+	GYROSG_API_ENV=dev env/bin/python -m alembic revision --autogenerate -m $$MIGRATION_NAME
 
 
 .PHONY: migrate-dev
 migrate-dev:
-	GYROSG_API_ENV=dev alembic upgrade head
+	GYROSG_API_ENV=dev env/bin/python -m alembic upgrade head
 
 
 .PHONY: migrate-rollback
 migrate-rollback:
-	GYROSG_API_ENV=dev alembic downgrade -1
+	GYROSG_API_ENV=dev env/bin/python -m alembic downgrade -1
 
 
-.PHONY: init-data
-init-data:
+.PHONY: init-dev-db
+init-dev-db: migrate-dev
 	env/bin/python -m app.init_db
 
 
-.PHONY: deploy
-deploy:
+.PHONY: deploy-dev
+deploy-dev:
 	rsync -av -e 'ssh -i ~/.ssh/gyrosg-server.pem' --exclude '.env' --exclude 'env' --exclude '.git*' --exclude '.idea*' --exclude 'tests' .	\
-	ubuntu@ec2-13-250-42-235.ap-southeast-1.compute.amazonaws.com:~/gyrosg/server
+	ubuntu@ec2-13-250-42-235.ap-southeast-1.compute.amazonaws.com:~/gyrosg/dev/server
 
 
 #################
 # PROD COMMANDS #
 #################
 
+.PHONY: deploy-prod
+deploy-prod:
+	rsync -av -e 'ssh -i ~/.ssh/gyrosg-server.pem' --exclude '.env' --exclude 'env' --exclude '.git*' --exclude '.idea*' --exclude 'tests' .	\
+	ubuntu@ec2-13-250-42-235.ap-southeast-1.compute.amazonaws.com:~/gyrosg/server
+
+
 .PHONY: create-prod-db
 create-prod-db:
-	PGPASSWORD=gyrosg psql postgres -U gyrosg -h localhost -c "CREATE DATABASE ${MODULE};"
-
-
-.PHONY: init-db
-init-db: migrate-prod
-	env/bin/python -m app.init_db
+	PGPASSWORD=gyrosg psql postgres -U gyrosg -h localhost -c "CREATE DATABASE ${DB_NAME};"
 
 
 .PHONY: migrate-prod
 migrate-prod:
 	GYROSG_API_ENV=prod env/bin/python -m alembic upgrade head
 
+
+.PHONY: init-prod-db
+init-prod-db: migrate-prod
+	env/bin/python -m app.init_db

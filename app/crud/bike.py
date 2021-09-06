@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from sqlalchemy.orm import Session, contains_eager, joinedload
 
@@ -15,9 +15,11 @@ class CRUDBike(CRUDBase[models.Bike, BikeCreate, BikeUpdate]):
         db: Session,
         *,
         id: Optional[int] = None,
-        model_name: Optional[int] = None,
-        transmission: Optional[TransmissionTypeEnum] = None,
-        required_licence: Optional[DrivingLicenceTypeEnum] = None,
+        model_name: Optional[List[str]] = None,
+        transmission: Optional[List[str]] = None,
+        licence_class: Optional[List[str]] = None,
+        has_storage_rack: Optional[bool] = None,
+        has_storage_box: Optional[bool] = None,
         is_deleted: Optional[bool] = None,
         offset: Optional[int] = None,
         limit: Optional[int] = None,
@@ -27,13 +29,19 @@ class CRUDBike(CRUDBase[models.Bike, BikeCreate, BikeUpdate]):
             db.query(self.model)
             .options(joinedload(self.model.model))
             .options(joinedload(self.model.user))
+            .options(joinedload(self.model.transmission))
+            .options(joinedload(self.model.licence_class))
         )
         if model_name:
-            query = query.join(self.model.model).filter(models.BikeModel.name == model_name)
+            query = query.join(self.model.model).filter(models.BikeModel.name.in_(model_name))
         if transmission:
-            query = query.filter(self.model.transmission == transmission)
-        if required_licence:
-            query = query.filter(self.model.required_licence == required_licence)
+            query = query.join(self.model.transmission).filter(models.Transmission.name.in_(transmission))
+        if licence_class:
+            query = query.join(self.model.licence_class).filter(models.LicenceClass.name.in_(licence_class))
+        if has_storage_rack:
+            query = query.filter(self.model.storage_rack == True)
+        if has_storage_box:
+            query = query.filter(self.model.storage_box == True)
         if id:
             query = query.filter(self.model.id == id)
         if is_deleted is True:

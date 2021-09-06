@@ -27,7 +27,7 @@ class CRUDUser(CRUDBase[models.User, UserCreate, UserUpdateInput]):
             last_name=obj_in.last_name,
             mobile_number=obj_in.mobile_number,
             nric_number=obj_in.nric_number,
-            driving_licence_type=obj_in.driving_licence_type,
+            licence_class_id=obj_in.licence_class_id,
         )
         return self.create_db_model(db, db_model_in=db_obj)
 
@@ -41,7 +41,7 @@ class CRUDUser(CRUDBase[models.User, UserCreate, UserUpdateInput]):
             last_name=obj_in.last_name,
             mobile_number=obj_in.mobile_number,
             nric_number=obj_in.nric_number,
-            driving_licence_type=obj_in.driving_licence_type,
+            licence_class_id=obj_in.licence_class_id,
             is_superuser=obj_in.is_superuser,
         )
         return self.create_db_model(db, db_model_in=db_obj)

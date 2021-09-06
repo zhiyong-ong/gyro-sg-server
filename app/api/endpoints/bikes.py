@@ -1,7 +1,7 @@
 import logging
 from typing import List, Any, Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -11,8 +11,6 @@ from app.core.constants import (
     PUBLIC_DESC,
     BASIC_USER_DESC,
     SUPERUSER_PRIVILEGE_DESC,
-    DrivingLicenceTypeEnum,
-    TransmissionTypeEnum,
 )
 
 router = APIRouter()
@@ -32,43 +30,49 @@ bike_current_user_endpoint = "/{bike_id}/me"
 )
 def read_bike_filter_params_endpoint(*, db: Session = Depends(deps.get_db)):
     logger.info(f"Retrieving bike filter params")
-    response = {}
-    response["required_licence_types"] = [e.value for e in DrivingLicenceTypeEnum]
-    response["transmission_types"] = [e.value for e in TransmissionTypeEnum]
-
-    bike_models = crud.bike_model.filter_with_params(db, is_deleted=False)
-    response["bike_model_types"] = [bike_model.name for bike_model in bike_models]
+    response = {
+        "licence_class": {
+            "header": "Licence Class",
+            "fields": crud.licence_class.get_multi(db, offset=None, limit=None),
+        },
+        "transmission": {
+            "header": "Transmission",
+            "fields": crud.transmission.get_multi(db, offset=None, limit=None)
+        }
+    }
     return response
 
 
 @router.get(
     base_endpoint,
-    response_model=List[schemas.BikeWithRelationships],
+    response_model=List[schemas.BikeResponse],
     description="Get a list of all bikes. " + PUBLIC_DESC,
     status_code=status.HTTP_200_OK,
 )
 def read_bikes(
     *,
     db: Session = Depends(deps.get_db),
-    model_name: str = None,
-    transmission: TransmissionTypeEnum = None,
-    required_licence: DrivingLicenceTypeEnum = None,
+    model_name: Optional[List[str]] = Query(None),
+    transmission: Optional[List[str]] = Query(None),
+    licence_class: Optional[List[str]] = Query(None),
+    has_storage_rack: Optional[bool] = None,
+    has_storage_box: Optional[bool] = None,
     is_deleted: Optional[bool] = None,
     offset: int = 0,
     limit: int = 100,
 ) -> Any:
     logger.info(f"Retrieving all bikes based on query parameters")
     bikes = crud.bike.filter_with_params(
-        db, model_name=model_name, transmission=transmission, required_licence=required_licence,
+        db, model_name=model_name, transmission=transmission, licence_class=licence_class,
+        has_storage_rack=has_storage_rack, has_storage_box=has_storage_box,
         is_deleted=is_deleted, offset=offset, limit=limit
     )
-    print(bikes)
     return bikes
 
 
 @router.get(
     bike_endpoint,
-    response_model=schemas.BikeWithRelationships,
+    response_model=schemas.BikeResponse,
     description="Get bike details based on bike id. " + PUBLIC_DESC,
     status_code=status.HTTP_200_OK,
 )
@@ -80,7 +84,7 @@ def read_bike(*, db: Session = Depends(deps.get_db), bike_id: int):
 
 @router.post(
     bike_current_user_create_endpoint,
-    response_model=schemas.BikeWithRelationships,
+    response_model=schemas.BikeResponse,
     status_code=status.HTTP_201_CREATED,
     description="Create bike for current user. " + BASIC_USER_DESC,
 )
@@ -97,7 +101,7 @@ def create_bike_current_user(
 
 @router.patch(
     bike_current_user_endpoint,
-    response_model=schemas.BikeWithRelationships,
+    response_model=schemas.BikeResponse,
     status_code=status.HTTP_200_OK,
     description="Update current user's bike based on the bike id. " + BASIC_USER_DESC,
 )
@@ -126,7 +130,7 @@ def update_bike_current_user(
 
 @router.patch(
     bike_endpoint,
-    response_model=schemas.BikeWithRelationships,
+    response_model=schemas.BikeResponse,
     status_code=status.HTTP_200_OK,
     description="Update any bike based on the bike id. " + SUPERUSER_PRIVILEGE_DESC,
 )

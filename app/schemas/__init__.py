@@ -3,7 +3,7 @@ from .bike import (
     BikeCreate,
     BikeCreateInput,
     BikeUpdate,
-    BikeWithRelationships,
+    BikeResponse,
     BikeFilterParams,
 )
 from .bike_model import (
@@ -28,3 +28,5 @@ from .user import (
     UserUpdatePassword,
     UserUpdateInput,
 )
+from .transmission import TransmissionCreate, TransmissionUpdate, Transmission
+from .licence_class import LicenceClassCreate, LicenceClassUpdate, LicenceClass

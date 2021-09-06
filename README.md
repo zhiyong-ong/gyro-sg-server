@@ -16,6 +16,7 @@ DB_USER=gyrosg
 DB_PASSWORD=gyrosg
 DB_PORT=5432
 DB_NAME=gyrosg
+SERVER_PORT=30000
 FIRST_SUPERUSER=gyrosg_admin@gyrosg.com
 FIRST_SUPERUSER_PASSWORD=gyrosg_admin
 ```
@@ -96,6 +97,7 @@ DB_USER=gyrosg
 DB_PASSWORD=gyrosg
 DB_PORT=5432
 DB_NAME=gyrosg
+SERVER_PORT=30000
 FIRST_SUPERUSER=gyrosg_admin@gyrosg.com
 FIRST_SUPERUSER_PASSWORD=gyrosg_admin
 ```

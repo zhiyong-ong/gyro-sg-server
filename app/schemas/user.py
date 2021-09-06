@@ -1,9 +1,8 @@
+from __future__ import annotations
 from typing import Optional
 
 from pydantic import EmailStr
 from pydantic.main import BaseModel
-
-from app.core.constants import DrivingLicenceTypeEnum
 
 
 class UserBase(BaseModel):
@@ -12,10 +11,7 @@ class UserBase(BaseModel):
     last_name: Optional[str] = None
     mobile_number: Optional[str] = None
     nric_number: Optional[str] = None
-    driving_licence_type: Optional[DrivingLicenceTypeEnum] = None
-
-    class Config:
-        extra = "forbid"
+    licence_class_id: Optional[int] = None
 
 
 class UserCreate(UserBase):
@@ -23,9 +19,6 @@ class UserCreate(UserBase):
     password: str
     first_name: str
     last_name: str
-    mobile_number: Optional[str] = None
-    nric_number: Optional[str] = None
-    driving_licence_type: Optional[DrivingLicenceTypeEnum] = None
 
 
 class UserCreateSuperuser(UserCreate):
