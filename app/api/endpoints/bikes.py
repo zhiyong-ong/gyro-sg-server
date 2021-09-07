@@ -38,6 +38,13 @@ def read_bike_filter_params_endpoint(*, db: Session = Depends(deps.get_db)):
         "transmission": {
             "header": "Transmission",
             "fields": crud.transmission.get_multi(db, offset=None, limit=None)
+        },
+        "other": {
+            "header": "Others",
+            "fields": [
+                {"description": "Includes storage rack",},
+                {"description": "Includes storage box",},
+            ]
         }
     }
     return response
