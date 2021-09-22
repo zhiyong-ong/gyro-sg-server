@@ -22,6 +22,7 @@ class BikeModelUpdate(BikeModelBase):
 
 
 class BikeModel(BikeModelBase):
+    id: int
     name: str
 
     class Config:

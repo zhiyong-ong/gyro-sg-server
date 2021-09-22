@@ -12,12 +12,15 @@ class CRUDBikeModel(CRUDBase[models.BikeModel, BikeModelCreate, BikeModelUpdate]
         self,
         db: Session,
         *,
+        name: Optional[str] = None,
         is_deleted: Optional[bool] = None,
         offset: Optional[int] = None,
         limit: Optional[int] = None,
         multi: Optional[bool] = True,
     ) -> Union[List[models.BikeModel], models.BikeModel]:
         query = db.query(self.model)
+        if name:
+            query = query.filter(self.model.name == name)
         if is_deleted is True:
             query = query.filter(self.model.is_deleted == True)
         if is_deleted is False:

@@ -44,7 +44,7 @@ create-dev-db:
 .PHONY: clean-dev-db
 clean-dev-db:
 	PGPASSWORD=gyrosg psql postgres -U gyrosg -h localhost -c "DROP DATABASE IF EXISTS ${DB_NAME};"
-	PGPASSWORD=gyrosg psql postgres -U gyrosg -h localhost -c "CREATE DATABASE ${MODULE};"
+	PGPASSWORD=gyrosg psql postgres -U gyrosg -h localhost -c "CREATE DATABASE ${DB_NAME};"
 
 
 .PHONY: clean-test-db
@@ -77,7 +77,7 @@ init-dev-db: migrate-dev
 .PHONY: deploy-dev
 deploy-dev:
 	rsync -av -e 'ssh -i ~/.ssh/gyrosg-server.pem' --exclude '.env' --exclude 'env' --exclude '.git*' --exclude '.idea*' --exclude 'tests' .	\
-	ubuntu@ec2-13-250-42-235.ap-southeast-1.compute.amazonaws.com:~/gyrosg/dev/server
+	ubuntu@gyrosg-api.com:~/gyrosg/dev/server
 
 
 #################
@@ -87,7 +87,7 @@ deploy-dev:
 .PHONY: deploy-prod
 deploy-prod:
 	rsync -av -e 'ssh -i ~/.ssh/gyrosg-server.pem' --exclude '.env' --exclude 'env' --exclude '.git*' --exclude '.idea*' --exclude 'tests' .	\
-	ubuntu@ec2-13-250-42-235.ap-southeast-1.compute.amazonaws.com:~/gyrosg/server
+	ubuntu@gyrosg-api.com:~/gyrosg/server
 
 
 .PHONY: create-prod-db
@@ -98,6 +98,12 @@ create-prod-db:
 .PHONY: migrate-prod
 migrate-prod:
 	GYROSG_API_ENV=prod env/bin/python -m alembic upgrade head
+
+
+.PHONY: clean-prod-db
+clean-prod-db:
+	PGPASSWORD=gyrosg psql postgres -U gyrosg -h localhost -c "DROP DATABASE IF EXISTS ${DB_NAME};"
+	PGPASSWORD=gyrosg psql postgres -U gyrosg -h localhost -c "CREATE DATABASE ${MODULE};"
 
 
 .PHONY: init-prod-db

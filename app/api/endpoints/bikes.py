@@ -37,15 +37,21 @@ def read_bike_filter_params_endpoint(*, db: Session = Depends(deps.get_db)):
         },
         "transmission": {
             "header": "Transmission",
-            "fields": crud.transmission.get_multi(db, offset=None, limit=None)
+            "fields": crud.transmission.get_multi(db, offset=None, limit=None),
         },
         "other": {
             "header": "Others",
             "fields": [
-                {"description": "Includes storage rack",},
-                {"description": "Includes storage box",},
-            ]
-        }
+                {
+                    "name": "has_storage_rack",
+                    "description": "Includes storage rack",
+                },
+                {
+                    "name": "has_storage_box",
+                    "description": "Includes storage box",
+                },
+            ],
+        },
     }
     return response
 
@@ -70,9 +76,15 @@ def read_bikes(
 ) -> Any:
     logger.info(f"Retrieving all bikes based on query parameters")
     bikes = crud.bike.filter_with_params(
-        db, model_name=model_name, transmission=transmission, licence_class=licence_class,
-        has_storage_rack=has_storage_rack, has_storage_box=has_storage_box,
-        is_deleted=is_deleted, offset=offset, limit=limit
+        db,
+        model_name=model_name,
+        transmission=transmission,
+        licence_class=licence_class,
+        has_storage_rack=has_storage_rack,
+        has_storage_box=has_storage_box,
+        is_deleted=is_deleted,
+        offset=offset,
+        limit=limit,
     )
     return bikes
 

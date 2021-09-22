@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from starlette.testclient import TestClient
 
 from app import schemas, crud
+from app.models import BikeModel, Transmission
 from app.schemas import UserCreate
 from tests.utils.user import user_authentication_headers
 
@@ -53,3 +54,17 @@ def other_user_headers(
         client=client, email=other_user.email, password=password
     )
     return headers
+
+
+@pytest.fixture
+def bike_model(test_db: Session) -> schemas.BikeModel:
+    bike_model_test_model = BikeModel(
+        name="test bike model 1",
+    )
+    bike_model_test = crud.bike_model.create_db_model(
+        test_db, db_model_in=bike_model_test_model
+    )
+    assert bike_model_test
+    bike_model_test_schema = schemas.BikeModel.from_orm(bike_model_test)
+    assert bike_model_test_schema
+    return bike_model_test_schema

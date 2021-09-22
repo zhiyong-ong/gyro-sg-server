@@ -33,11 +33,17 @@ class CRUDBike(CRUDBase[models.Bike, BikeCreate, BikeUpdate]):
             .options(joinedload(self.model.licence_class))
         )
         if model_name:
-            query = query.join(self.model.model).filter(models.BikeModel.name.in_(model_name))
+            query = query.join(self.model.model).filter(
+                models.BikeModel.name.in_(model_name)
+            )
         if transmission:
-            query = query.join(self.model.transmission).filter(models.Transmission.name.in_(transmission))
+            query = query.join(self.model.transmission).filter(
+                models.Transmission.name.in_(transmission)
+            )
         if licence_class:
-            query = query.join(self.model.licence_class).filter(models.LicenceClass.name.in_(licence_class))
+            query = query.join(self.model.licence_class).filter(
+                models.LicenceClass.name.in_(licence_class)
+            )
         if has_storage_rack:
             query = query.filter(self.model.storage_rack == True)
         if has_storage_box:

@@ -2,8 +2,6 @@ from typing import Dict
 
 from starlette.testclient import TestClient
 
-from app import schemas
-
 
 def test_create_bike_model(
     client: TestClient,

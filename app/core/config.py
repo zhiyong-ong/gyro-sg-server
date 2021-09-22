@@ -46,9 +46,6 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER: EmailStr = "test_superuser@example.com"
     FIRST_SUPERUSER_PASSWORD: str = "password"
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
 
 
 class ProdConfig(Settings):
@@ -69,6 +66,9 @@ class ProdConfig(Settings):
             path=f"/{values.get('DB_NAME', '')}",
         )
 
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
 
 class DevConfig(Settings):
     DEVELOPMENT = True
@@ -88,6 +88,9 @@ class DevConfig(Settings):
             path=f"/{values.get('DB_NAME', '')}",
         )
 
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
 
 class TestConfig(Settings):
     DEVELOPMENT = True

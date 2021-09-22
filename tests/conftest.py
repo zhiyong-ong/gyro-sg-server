@@ -13,6 +13,8 @@ from app import schemas, crud
 from app.api.deps import get_db
 from app.db.base_class import Base
 from app.core.config import get_config, TEST
+from app.db.initial_licence_class_data import initial_licence_class_data
+from app.db.initial_transmission_data import initial_transmission_data
 from app.main import app
 
 TEST_CONFIG = get_config(TEST)
@@ -44,6 +46,8 @@ def test_db(get_test_db: Session):
     get_test_db.commit()
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
+    initial_transmission_data(get_test_db)
+    initial_licence_class_data(get_test_db)
     return get_test_db
 
 

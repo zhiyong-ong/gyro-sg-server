@@ -13,6 +13,9 @@ class UserBase(BaseModel):
     nric_number: Optional[str] = None
     licence_class_id: Optional[int] = None
 
+    class Config:
+        extra = "forbid"
+
 
 class UserCreate(UserBase):
     email: EmailStr

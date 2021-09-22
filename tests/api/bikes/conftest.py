@@ -8,20 +8,6 @@ from app.models.bike import Bike, BikeModel
 
 
 @pytest.fixture
-def bike_model_1(test_db: Session) -> schemas.BikeModel:
-    bike_model_test_model = BikeModel(
-        name="test bike model 1",
-    )
-    bike_model_test = crud.bike_model.create_db_model(
-        test_db, db_model_in=bike_model_test_model
-    )
-    assert bike_model_test
-    bike_model_test_schema = schemas.BikeModel.from_orm(bike_model_test)
-    assert bike_model_test_schema
-    return bike_model_test_schema
-
-
-@pytest.fixture
 def bike_model_2(test_db: Session) -> schemas.BikeModel:
     bike_model_test_model = BikeModel(
         name="test bike model 2",
@@ -36,11 +22,11 @@ def bike_model_2(test_db: Session) -> schemas.BikeModel:
 
 
 @pytest.fixture
-def bike_with_model_1(
-    test_db: Session, bike_model_1: schemas.BikeModel, user: schemas.UserWithId
+def bike_with_model(
+    test_db: Session, bike_model: schemas.BikeModel, user: schemas.UserWithId
 ) -> schemas.BikeResponse:
     bike_test_model = Bike(
-        model_id=bike_model_1.id,
+        model_id=bike_model.id,
         color="test_color_1",
         images=["image1", "image2"],
         rate=1,
@@ -52,9 +38,7 @@ def bike_with_model_1(
         test_db, db_model_in=bike_test_model
     )
     assert bike_with_model_test
-    bike_with_model_test_schema = schemas.BikeResponse.from_orm(
-        bike_with_model_test
-    )
+    bike_with_model_test_schema = schemas.BikeResponse.from_orm(bike_with_model_test)
     assert bike_with_model_test_schema
     return bike_with_model_test_schema
 
@@ -76,9 +60,7 @@ def bikes_with_model_2(
         test_db, db_model_in=bike_test_model
     )
     assert bike_with_model_test
-    bike_with_model_test_schema_1 = schemas.BikeResponse.from_orm(
-        bike_with_model_test
-    )
+    bike_with_model_test_schema_1 = schemas.BikeResponse.from_orm(bike_with_model_test)
     assert bike_with_model_test_schema_1
 
     bike_test_model = Bike(
@@ -94,9 +76,7 @@ def bikes_with_model_2(
         test_db, db_model_in=bike_test_model
     )
     assert bike_with_model_test
-    bike_with_model_test_schema_2 = schemas.BikeResponse.from_orm(
-        bike_with_model_test
-    )
+    bike_with_model_test_schema_2 = schemas.BikeResponse.from_orm(bike_with_model_test)
     assert bike_with_model_test_schema_2
 
     return [bike_with_model_test_schema_1, bike_with_model_test_schema_2]
@@ -105,18 +85,18 @@ def bikes_with_model_2(
 @pytest.fixture
 def bikes_with_models(
     test_db: Session,
-    bike_with_model_1: schemas.BikeResponse,
+    bike_with_model: schemas.BikeResponse,
     bikes_with_model_2: List[schemas.BikeResponse],
 ) -> List[schemas.BikeResponse]:
-    return [bike_with_model_1] + bikes_with_model_2
+    return [bike_with_model] + bikes_with_model_2
 
 
 @pytest.fixture
 def deleted_bike_with_model(
-    test_db: Session, bike_model_1: schemas.BikeModel, user: schemas.UserWithId
+    test_db: Session, bike_model: schemas.BikeModel, user: schemas.UserWithId
 ) -> schemas.BikeResponse:
     bike_test_model = Bike(
-        model_id=bike_model_1.id,
+        model_id=bike_model.id,
         color="test_color_1",
         images=["image1", "image2"],
         rate=1,
@@ -129,8 +109,6 @@ def deleted_bike_with_model(
         test_db, db_model_in=bike_test_model
     )
     assert bike_with_model_test
-    bike_with_model_test_schema = schemas.BikeResponse.from_orm(
-        bike_with_model_test
-    )
+    bike_with_model_test_schema = schemas.BikeResponse.from_orm(bike_with_model_test)
     assert bike_with_model_test_schema
     return bike_with_model_test_schema

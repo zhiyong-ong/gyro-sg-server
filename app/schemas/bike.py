@@ -24,7 +24,6 @@ class BikeBase(BaseModel):
     model_id: Optional[int] = None
 
 
-
 class BikeCreateInput(BikeBase):
     model_id: int
     availabilities: Optional[List[BikeAvailabilityBase]] = []
@@ -64,22 +63,28 @@ class BikeResponse(BaseModel):
     class Config:
         orm_mode = True
 
+
 class FilterResponse(BaseModel):
     header: str
     fields: List[Any]
 
+
 class LicenceClassFilterResponse(FilterResponse):
     fields: List[LicenceClass]
 
+
 class TransmissionFilterResponse(FilterResponse):
     fields: List[Transmission]
+
 
 class Other(BaseModel):
     name: Optional[str]
     description: Optional[str]
 
+
 class OtherFilterResponse(FilterResponse):
     fields: List[Other]
+
 
 class BikeFilterParams(BaseModel):
     licence_class: LicenceClassFilterResponse
