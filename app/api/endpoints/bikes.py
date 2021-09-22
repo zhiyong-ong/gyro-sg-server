@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from typing import List, Any, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -71,9 +72,32 @@ def read_bikes(
     has_storage_rack: Optional[bool] = None,
     has_storage_box: Optional[bool] = None,
     is_deleted: Optional[bool] = None,
+    start_datetime: Optional[datetime] = None,
+    end_datetime: Optional[datetime] = None,
     offset: int = 0,
     limit: int = 100,
 ) -> Any:
+    if start_datetime and not end_datetime or end_datetime and not start_datetime:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="If start_datetime is provided, end_datetime has to be provided as well."
+        )
+    if start_datetime.tzinfo is None or start_datetime.tzinfo.utcoffset(start_datetime) is None:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="start_datetime has to be timezone aware."
+        )
+    if end_datetime.tzinfo is None or end_datetime.tzinfo.utcoffset(end_datetime) is None:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="end_datetime has to be timezone aware."
+        )
+    if start_datetime and end_datetime:
+        if start_datetime > end_datetime:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="end_datetime has to be set further in time than start_datetime."
+            )
     logger.info(f"Retrieving all bikes based on query parameters")
     bikes = crud.bike.filter_with_params(
         db,
@@ -83,6 +107,8 @@ def read_bikes(
         has_storage_rack=has_storage_rack,
         has_storage_box=has_storage_box,
         is_deleted=is_deleted,
+        start_datetime=start_datetime,
+        end_datetime=end_datetime,
         offset=offset,
         limit=limit,
     )

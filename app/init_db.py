@@ -1,5 +1,6 @@
 import logging
 
+from app.db.initial_availabilities_data import initial_bike_availability_data
 from app.db.initial_bike_data import initial_bike_data
 from app.db.initial_licence_class_data import initial_licence_class_data
 from app.db.initial_model_data import initial_model_data
@@ -18,6 +19,7 @@ def init() -> None:
     initial_transmission_data(db)
     initial_licence_class_data(db)
     initial_bike_data(db)
+    initial_bike_availability_data(db)
 
 
 def main() -> None:

@@ -28,5 +28,5 @@ from .user import (
     UserUpdatePassword,
     UserUpdateInput,
 )
-from .transmission import TransmissionCreate, TransmissionUpdate, Transmission
-from .licence_class import LicenceClassCreate, LicenceClassUpdate, LicenceClass
+from .transmission import TransmissionCreate, TransmissionUpdate, Transmission, TransmissionCreateWithId
+from .licence_class import LicenceClassCreate, LicenceClassUpdate, LicenceClass, LicenceClassCreateWithId

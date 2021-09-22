@@ -23,12 +23,12 @@ def initial_transmission_data(db: Session) -> None:
     for transmission_data in models:
         if crud.transmission.get(db, id=transmission_data.get("id")):
             continue
-        bike_model = schemas.Transmission(
+        transmission_model = schemas.TransmissionCreateWithId(
             id=transmission_data.get("id"),
             name=transmission_data.get("name"),
             description=transmission_data.get("description"),
         )
-        crud.transmission.create(db, obj_in=bike_model)
+        crud.transmission.create(db, obj_in=transmission_model)
         count += 1
     logger.info(f"Created {count} initial transmission data")
     db.execute(

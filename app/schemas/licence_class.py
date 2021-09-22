@@ -12,6 +12,8 @@ class LicenceClassBase(BaseModel):
 class LicenceClassCreate(LicenceClassBase):
     name: str
 
+class LicenceClassCreateWithId(LicenceClassCreate):
+    id: int
 
 class LicenceClassUpdate(LicenceClassBase):
     pass

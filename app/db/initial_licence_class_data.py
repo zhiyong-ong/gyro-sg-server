@@ -23,12 +23,12 @@ def initial_licence_class_data(db: Session) -> None:
     for licence_class_data in models:
         if crud.licence_class.get(db, id=licence_class_data.get("id")):
             continue
-        bike_model = schemas.LicenceClass(
+        licence_class_model = schemas.LicenceClassCreateWithId(
             id=licence_class_data.get("id"),
             name=licence_class_data.get("name"),
             description=licence_class_data.get("description"),
         )
-        crud.licence_class.create(db, obj_in=bike_model)
+        crud.licence_class.create(db, obj_in=licence_class_model)
         count += 1
     logger.info(f"Created {count} initial licence class data")
     db.execute(

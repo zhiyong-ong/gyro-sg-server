@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional, List
 
 from sqlalchemy.orm import Session, contains_eager, joinedload
@@ -21,6 +22,8 @@ class CRUDBike(CRUDBase[models.Bike, BikeCreate, BikeUpdate]):
         has_storage_rack: Optional[bool] = None,
         has_storage_box: Optional[bool] = None,
         is_deleted: Optional[bool] = None,
+        start_datetime: Optional[datetime] = None,
+        end_datetime: Optional[datetime] = None,
         offset: Optional[int] = None,
         limit: Optional[int] = None,
         multi: Optional[bool] = True,
@@ -31,6 +34,7 @@ class CRUDBike(CRUDBase[models.Bike, BikeCreate, BikeUpdate]):
             .options(joinedload(self.model.user))
             .options(joinedload(self.model.transmission))
             .options(joinedload(self.model.licence_class))
+            .options(joinedload(self.model.availabilities))
         )
         if model_name:
             query = query.join(self.model.model).filter(
@@ -54,7 +58,11 @@ class CRUDBike(CRUDBase[models.Bike, BikeCreate, BikeUpdate]):
             query = query.filter(self.model.is_deleted == True)
         if is_deleted is False:
             query = query.filter(self.model.is_deleted == False)
-
+        if start_datetime and end_datetime:
+            query = query.join(self.model.availabilities).filter(
+                models.BikeAvailability.start_datetime <= start_datetime,
+                models.BikeAvailability.end_datetime >= end_datetime
+            )
         query = query.offset(offset).limit(limit)
         if multi:
             return query.all()

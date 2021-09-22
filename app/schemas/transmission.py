@@ -12,6 +12,8 @@ class TransmissionBase(BaseModel):
 class TransmissionCreate(TransmissionBase):
     name: str
 
+class TransmissionCreateWithId(TransmissionCreate):
+    id: int
 
 class TransmissionUpdate(TransmissionBase):
     pass
