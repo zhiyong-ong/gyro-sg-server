@@ -82,12 +82,12 @@ def read_bikes(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="If start_datetime is provided, end_datetime has to be provided as well."
         )
-    if start_datetime.tzinfo is None or start_datetime.tzinfo.utcoffset(start_datetime) is None:
+    if start_datetime and (start_datetime.tzinfo is None or start_datetime.tzinfo.utcoffset(start_datetime) is None):
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="start_datetime has to be timezone aware."
         )
-    if end_datetime.tzinfo is None or end_datetime.tzinfo.utcoffset(end_datetime) is None:
+    if end_datetime and (end_datetime.tzinfo is None or end_datetime.tzinfo.utcoffset(end_datetime) is None):
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="end_datetime has to be timezone aware."
