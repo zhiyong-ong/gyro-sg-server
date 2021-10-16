@@ -30,6 +30,36 @@ models = [
         "start_datetime": datetime(2021, 9, 2, 10).astimezone(timezone),
         "end_datetime": datetime(2021, 9, 3, 16).astimezone(timezone),
         "bike_id": 2
+    },
+    {
+        "start_datetime": datetime(2021, 11, 1, 10).astimezone(timezone),
+        "end_datetime": datetime(2021, 11, 25, 16).astimezone(timezone),
+        "bike_id": 4
+    },
+    {
+        "start_datetime": datetime(2021, 11, 2, 8).astimezone(timezone),
+        "end_datetime": datetime(2021, 11, 15, 17).astimezone(timezone),
+        "bike_id": 3
+    },
+    {
+        "start_datetime": datetime(2021, 11, 5, 6).astimezone(timezone),
+        "end_datetime": datetime(2021, 11, 9, 17).astimezone(timezone),
+        "bike_id": 6
+    },
+    {
+        "start_datetime": datetime(2021, 11, 10, 10).astimezone(timezone),
+        "end_datetime": datetime(2021, 11, 30, 16).astimezone(timezone),
+        "bike_id": 5
+    },
+    {
+        "start_datetime": datetime(2021, 11, 23, 10).astimezone(timezone),
+        "end_datetime": datetime(2021, 11, 27, 16).astimezone(timezone),
+        "bike_id": 3
+    },
+    {
+        "start_datetime": datetime(2021, 11, 1, 10).astimezone(timezone),
+        "end_datetime": datetime(2021, 11, 7, 16).astimezone(timezone),
+        "bike_id": 7
     }
 ]
 
